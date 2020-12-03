@@ -3,7 +3,7 @@
 
 using namespace std;
 
-constexpr double tolerance=0.01;
+constexpr double tolerance=0.0001;
 
 void load_data(string data, double arr[3]) {
   string::size_type sz;
@@ -60,7 +60,7 @@ TEST(self, load) {
   EXPECT_EQ(200, tmp[2]);
 }
 
-TEST(conversion, hsl_rgb_xyz_jab) {
+TEST(conversion, base_methods) {
   test_set tests[] {
     test_set{"0 0 0", "0 0 0", "0 0 0", "0 0 0", "0 0 0"},
     test_set{"1 1 1", "0 0 1", "0 0 1", ".95047 1 1.08883", "100 0 0"},
