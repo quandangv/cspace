@@ -23,15 +23,15 @@ inline double inverse_f(double input) {
 
 void xyz_cielab(const double* input, double* output) {
   double yp = f(input[1] / Yn);
-  output[1] = 500 * (f(input[0] / Xn) - yp);
-  output[2] = 200 * (yp - f(input[2] / Zn));
-  output[0] = 116.0*yp - 16.0;
+  output[1] = 5 * (f(input[0] / Xn) - yp);
+  output[2] = 2 * (yp - f(input[2] / Zn));
+  output[0] = 1.16*yp - 0.16;
 }
 
 void cielab_xyz(const double* input, double* output) {
-  double lp = (input[0] + 16) / 116.0;
-  output[0] = Xn * inverse_f(lp + input[1] / 500);
+  double lp = (input[0] + 0.16) / 1.16;
+  output[0] = Xn * inverse_f(lp + input[1] / 5);
   output[1] = Yn * inverse_f(lp);
-  output[2] = Zn * inverse_f(lp - input[2] / 200);
+  output[2] = Zn * inverse_f(lp - input[2] / 2);
 }
 
