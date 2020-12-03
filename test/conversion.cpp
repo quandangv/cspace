@@ -26,10 +26,11 @@ struct test_set {
   load_data(a##_str, control); \
   a##_##b(control, test); \
   load_data(b##_str, control); \
-  expect_near(test, control, #a, #b, a##_str); \
-  load_data(a##_str, test); \
-  a##_##b(test, test); \
-  expect_near(test, control, #a, string(#b) + " (in-place)", a##_str);
+  if (expect_near(test, control, #a, #b, a##_str)) { \
+    load_data(a##_str, test); \
+    a##_##b(test, test); \
+    expect_near(test, control, #a, string(#b) + " (in-place)", a##_str); \
+  }
 #define TEST_ROUTE(a, b) TEST_METHOD(a, b) TEST_METHOD(b, a)
 		TEST_ROUTE(rgb, xyz)
 		TEST_ROUTE(rgb, hsl)
@@ -45,8 +46,10 @@ struct test_set {
               std::abs(d1[2] - d2[2]) <= tolerance;
   }
   
-  void expect_near(const double output[3], const double expected[3], string from, string to, string input) {
-    EXPECT_TRUE(is_near(output, expected, tolerance)) << "Conversion from " << from << " to " << to << " is wrong, original RGB: " << rgb_str << endl << "Input: " << input << "\nOutput: " << to_string(output) << "\nExpected: " << to_string(expected) << endl;
+  bool expect_near(const double output[3], const double expected[3], string from, string to, string input) {
+    auto result = is_near(output, expected, tolerance);
+    EXPECT_TRUE(result) << "Conversion from " << from << " to " << to << " is wrong, input: " << input << "\nOutput: " << to_string(output) << "\nExpected: " << to_string(expected) << "\nOriginal RGB: " << rgb_str << endl;
+    return result;
   }
 };
 
