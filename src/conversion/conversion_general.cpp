@@ -1,5 +1,7 @@
 #include "conversion.hpp"
 
+using namespace std;
+
 colorspace get_mask(colorspace c) {
 #define ENTRY(color) if (c == colorspaces::color) return colorspaces::color##_msk;
   ENTRY(xyz)
@@ -25,7 +27,7 @@ void direct(double* value, colorspace from, colorspace to) {
     CASE(xyz, jzazbz)
     AB_CH(jzazbz, jzczhz)
     AB_CH(cielab, cielch)
-    default: throw conversion_error("Color-Direct: Unknown color conversion: from " +to_string(from) + " to " + to_string(to)); 
+    default: throw conversion_error("Color-Direct: Unknown color conversion: from " + to_string(from) + " to " + to_string(to)); 
 #undef AB_CH
 #undef CASE
   }
@@ -48,10 +50,11 @@ void convert_down(double* value, colorspace parent, colorspace to) {
 void convert(double* value, colorspace from, colorspace to) {
   if (from == to) return;
   auto parent = colorspaces::xyz;
-  while (auto common = from & get_mask(parent); common == to & get_mask(parent)) {
+  auto common = from & get_mask(parent);
+  while (common == to & get_mask(parent)) {
     parent = common;
   }
   convert_up(value, from, parent);
-  conver_down(value, parent, to);
+  convert_down(value, parent, to);
 }
 
