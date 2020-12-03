@@ -34,7 +34,7 @@ struct test_set {
 #define TEST_ROUTE(a, b) TEST_METHOD(a, b) TEST_METHOD(b, a)
 		TEST_ROUTE(rgb, xyz)
 		TEST_ROUTE(rgb, hsl)
-		//TEST_ROUTE(rgb, hsv)
+		TEST_ROUTE(rgb, hsv)
 		TEST_ROUTE(cielab, xyz)
 #undef TEST_ROUTE
 #undef TEST_METHOD
