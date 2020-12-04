@@ -13,9 +13,9 @@ inline double inverse_gamma(double x) {
 
 void xyz_rgb(const double* i, double* o, double white_lum) {
   double x = i[0], y = i[1], z = i[2];
-  o[0] = gamma( 3.2404542*x - 1.5371385*y - 0.4985314*z) / white_lum;
-  o[1] = gamma(-0.9692660*x + 1.8760108*y + 0.0415560*z) / white_lum;
-  o[2] = gamma( 0.0556434*x - 0.2040259*y + 1.0572252*z) / white_lum;
+  o[0] = gamma( 3.240454836021408466100*x - 1.53713885010257506520*y - 0.498531546868480873440*z) / white_lum;
+  o[1] = gamma(-0.969266389875653771680*x + 1.87601092884249122020*y + 0.041556082346673526519*z) / white_lum;
+  o[2] = gamma( 0.055643419604213656667*x - 0.20402585426769813732*y + 1.057225162457928795000*z) / white_lum;
 }
 
 void rgb_xyz(const double* i, double* o, double white_lum) {

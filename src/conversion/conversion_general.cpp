@@ -11,7 +11,7 @@ colorspace get_mask(colorspace c) {
   ENTRY(jzazbz)
   ENTRY(cielab)
 #undef ENTRY
-  return 0;
+  throw conversion_error("Color-Mask: Unknown color space: " + to_string(c));
 }
 
 void direct(double* value, colorspace from, colorspace to) {
@@ -59,8 +59,8 @@ void convert(double* value, colorspace from, colorspace to) {
   log::debug("Convert from " + to_string(from) + " to " + to_string(to));
   if (from == to) return;
   auto parent = colorspaces::xyz;
-  auto common = from & get_mask(parent);
-  while (common == to & get_mask(parent)) {
+  colorspace common;
+  while ((common = from & get_mask(parent)) == (to & get_mask(parent))) {
     parent = common;
   }
   convert_up(value, from, parent);

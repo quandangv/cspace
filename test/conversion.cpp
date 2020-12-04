@@ -3,7 +3,7 @@
 
 using namespace std;
 
-constexpr double tolerance=0.00001;
+constexpr double tolerance=0.0001;
 
 void load_data(string data, double arr[3]) {
   string::size_type sz;
@@ -38,16 +38,19 @@ struct test_set {
 		TEST_ROUTE(cielab, xyz)
 #undef TEST_ROUTE
 #undef TEST_METHOD
-#define TEST_METHOD(a, b) \
+#define TEST_METHOD(a, b, compare) \
   load_data(a##_str, test); \
   load_data(b##_str, control); \
   convert(test, colorspaces::a, colorspaces::b); \
+  // convert to a uniform colorspace to compare colors accurately \
+  convert(test, colorspaces::b, colorspaces::compare); \
+  convert(control, colorspaces::a, colorspaces::compare); \
   expect_near(test, control, #a, #b, a##_str);
-#define TEST_ROUTE(a, b) TEST_METHOD(a, b) TEST_METHOD(b, a)
-    TEST_ROUTE(hsv, hsl)
-    TEST_ROUTE(hsv, cielab)
-    TEST_ROUTE(hsv, xyz)
-    TEST_ROUTE(rgb, xyz)
+#define TEST_ROUTE(a, b, cmp) TEST_METHOD(a, b, cmp) TEST_METHOD(b, a, cmp)
+    TEST_ROUTE(hsv, hsl, rgb)
+    TEST_ROUTE(hsv, cielab, xyz)
+    TEST_ROUTE(hsv, xyz, xyz)
+    TEST_ROUTE(rgb, xyz, xyz)
 #undef TEST_ROUTE
 #undef TEST_METHOD
     
