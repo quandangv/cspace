@@ -38,6 +38,19 @@ struct test_set {
 		TEST_ROUTE(cielab, xyz)
 #undef TEST_ROUTE
 #undef TEST_METHOD
+#define TEST_METHOD(a, b) \
+  load_data(a##_str, test); \
+  load_data(b##_str, control); \
+  convert(test, colorspaces::a, colorspaces::b); \
+  expect_near(test, control, #a, #b, a##_str);
+#define TEST_ROUTE(a, b) TEST_METHOD(a, b) TEST_METHOD(b, a)
+    TEST_ROUTE(hsv, hsl)
+    TEST_ROUTE(hsv, cielab)
+    TEST_ROUTE(hsv, xyz)
+    TEST_ROUTE(rgb, xyz)
+#undef TEST_ROUTE
+#undef TEST_METHOD
+    
   }
   
   bool is_near(const double d1[3], const double d2[3], double tolerance) const {

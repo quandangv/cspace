@@ -5,7 +5,8 @@ project(cscheme VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-include_directories("${PROJECT_SOURCE_DIR}/include")
+configure_file(mode.hpp.in mode.hpp)
+target_include_directories(cscheme PUBLIC "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/include")
 
 add_subdirectory(src)
 

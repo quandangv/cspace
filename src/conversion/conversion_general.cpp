@@ -1,5 +1,7 @@
 #include "conversion.hpp"
 
+#include "mode.hpp"
+
 using namespace std;
 
 colorspace get_mask(colorspace c) {
@@ -15,16 +17,21 @@ colorspace get_mask(colorspace c) {
 void direct(double* value, colorspace from, colorspace to) {
   unsigned short combined = from << 8 | to;
   switch (combined) {
+#define CASE_BASE(a, b, method) \
+  case colorspaces::a << 8 | colorspaces::b: \
+    a##_##b(value, value); \
+    break; \
 #define CASE(a, b) \
-  case colorspaces::a << 8 | colorspaces::b: a##_##b(value, value); break; \
-  case colorspaces::b << 8 | colorspaces::a: b##_##a(value, value); break;
-#define AB_CH(ab, ch) \
-  case colorspaces::ab << 8 | colorspaces::ch: ab_ch(value, value); break; \
-  case colorspaces::ch << 8 | colorspaces::ab: ch_ab(value, value); break;
+  CASE_BASE(a, b, a##_##b) \
+  CASE_BASE(b, a, b##_##a)
+#define AB_CH(_ab, _ch) \
+  CASE_BASE(_ab, _ch, ab_ch) \
+  CASE_BASE(_ch, _ab, ch_ab)
     CASE(rgb, xyz)
     CASE(rgb, hsl)
     CASE(rgb, hsv)
     CASE(xyz, jzazbz)
+    CASE(xyz, cielab)
     AB_CH(jzazbz, jzczhz)
     AB_CH(cielab, cielch)
     default: throw conversion_error("Color-Direct: Unknown color conversion: from " + to_string(from) + " to " + to_string(to)); 
