@@ -4,6 +4,8 @@
 
 using namespace std;
 
+constexpr const char scope[] = "indirect-convert";
+
 colorspace get_mask(colorspace c) {
 #define ENTRY(color) if (c == colorspaces::color) return colorspaces::color##_msk;
   ENTRY(xyz)
@@ -20,7 +22,7 @@ void direct(double* value, colorspace from, colorspace to) {
 #define CASE_BASE(a, b, method) \
   case colorspaces::a << 8 | colorspaces::b: \
     method(value, value); \
-    log::debug("Direct conversion: "#a" to "#b); \
+    log::debug<scope>("Direct conversion: "#a" to "#b); \
     break;
 #define CASE(a, b) \
   CASE_BASE(a, b, a##_##b) \
@@ -56,7 +58,7 @@ void convert_down(double* value, colorspace parent, colorspace to) {
 }
   
 void convert(double* value, colorspace from, colorspace to) {
-  log::debug("Convert from " + to_string(from) + " to " + to_string(to));
+  log::debug<scope>("Convert from " + to_string(from) + " to " + to_string(to));
   if (from == to) return;
   auto parent = colorspaces::xyz;
   colorspace common;

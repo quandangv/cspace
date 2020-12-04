@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(include)
 add_subdirectory(src)
 
-if(TEST)
+if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(test)
 endif()
