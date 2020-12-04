@@ -1,6 +1,6 @@
 #include "conversion.hpp"
 
-#include "mode.hpp"
+#include "log.hpp"
 
 using namespace std;
 
@@ -19,8 +19,9 @@ void direct(double* value, colorspace from, colorspace to) {
   switch (combined) {
 #define CASE_BASE(a, b, method) \
   case colorspaces::a << 8 | colorspaces::b: \
-    a##_##b(value, value); \
-    break; \
+    method(value, value); \
+    log::debug("Direct conversion: "#a" to "#b); \
+    break;
 #define CASE(a, b) \
   CASE_BASE(a, b, a##_##b) \
   CASE_BASE(b, a, b##_##a)
@@ -50,11 +51,12 @@ void convert_up(double* value, colorspace from, colorspace parent) {
 void convert_down(double* value, colorspace parent, colorspace to) {
   if (parent == to) return;
   auto next_mask = to & get_mask(parent);
-  convert_down(value, next_mask, to);
   direct(value, parent, next_mask);
+  convert_down(value, next_mask, to);
 }
   
 void convert(double* value, colorspace from, colorspace to) {
+  log::debug("Convert from " + to_string(from) + " to " + to_string(to));
   if (from == to) return;
   auto parent = colorspaces::xyz;
   auto common = from & get_mask(parent);

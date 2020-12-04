@@ -3,7 +3,7 @@
 
 using namespace std;
 
-constexpr double tolerance=0.0001;
+constexpr double tolerance=0.00001;
 
 void load_data(string data, double arr[3]) {
   string::size_type sz;
@@ -29,7 +29,7 @@ struct test_set {
   if (expect_near(test, control, #a, #b, a##_str)) { \
     load_data(a##_str, test); \
     a##_##b(test, test); \
-    expect_near(test, control, #a, string(#b) + " (in-place)", a##_str); \
+    expect_near(test, control, #a, #b" (in-place)", a##_str); \
   }
 #define TEST_ROUTE(a, b) TEST_METHOD(a, b) TEST_METHOD(b, a)
 		TEST_ROUTE(rgb, xyz)
