@@ -1,7 +1,9 @@
 #pragma once
 
 #include <string_view>
+#include <string>
 
 using namespace std::literals;
+using std::string;
 
 constexpr auto DEBUG_SCOPES{"@DEBUG_SCOPES@"sv};

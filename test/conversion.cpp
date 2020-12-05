@@ -76,7 +76,7 @@ TEST(self, load) {
   EXPECT_EQ(200, tmp[2]);
 }
 
-TEST(conversion, base_methods) {
+TEST(conversion, main) {
   test_set tests[] {
     test_set{"0 0 0", "0 0 0", "0 0 0", "0 0 0", "0 0 0"},
     test_set{"1 1 1", "0 0 1", "0 0 1", ".95047 1 1.08883", "1 0 0"},

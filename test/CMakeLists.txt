@@ -52,6 +52,7 @@ function(add_unit_test source_file)
 endfunction()
 
 add_unit_test(conversion)
+add_unit_test(parse)
 
 # Run make check to build and run all unit tests
 add_custom_target(check
