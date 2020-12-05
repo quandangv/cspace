@@ -8,7 +8,7 @@ using namespace std;
 
 string to_string(const double* arr, colorspace space) {
   stringstream result;
-  result << std::setprecision(30) << arr[0];
+  result  << arr[0];
   auto count = colorspaces::component_count(space);
   for(int i = 1; i < count; i++)
     result << ' ' << arr[i];
@@ -19,7 +19,7 @@ template<int from_str>
 void str_space(string& str, colorspace& space) {
 #define CASE(a) \
   if constexpr(from_str) { \
-    if (strcasecmp(str.c_str(), #a)) { \
+    if (strcasecmp(str.c_str(), #a) == 0) { \
       space = colorspaces::a; \
       return; \
     } \

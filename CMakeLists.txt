@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(include)
 add_subdirectory(src)
 
+unset(DEBUG_SCOPES CACHE)
+
 if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(test)
