@@ -33,6 +33,7 @@ void direct(double* value, colorspace from, colorspace to) {
     CASE(rgb, xyz)
     CASE(rgb, hsl)
     CASE(rgb, hsv)
+    CASE(rgb, cmyk)
     CASE(xyz, jzazbz)
     CASE(xyz, cielab)
     AB_CH(jzazbz, jzczhz)

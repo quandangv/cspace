@@ -4,6 +4,20 @@ string to_string3(const double* arr) {
   return std::to_string(arr[0]) + " " + std::to_string(arr[1]) + " " + std::to_string(arr[2]);
 }
 
+colorspace stospace(const string& value) {
+#define CASE(a) if (#a == value) return colorspaces::a;
+  CASE(xyz);
+  CASE(rgb);
+  CASE(jzazbz);
+  CASE(cielab);
+  CASE(hsl);
+  CASE(hsv);
+  CASE(jzczhz);
+  CASE(cielch);
+#undef CASE
+  throw parse_error("Unknown colorspace: " + value);
+}
+
 int parse_code(const string& value, component& a, component& r,
                                     component& g, component& b) {
   if (value[0] != '#')
