@@ -45,7 +45,7 @@ function(add_unit_test source_file)
   add_executable(${name} ${source_file}.cpp)
 
   # Link against gmock (this automatically links against gtest)
-  target_link_libraries(${name} cs gmock_main)
+  target_link_libraries(${name} space gmock_main)
   add_test(NAME ${name} COMMAND ${name})
 
   add_dependencies(all_unit_tests ${name})
