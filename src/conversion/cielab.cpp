@@ -15,7 +15,7 @@ inline double f(double input) {
   return input / (3*delta*delta) + 4.0 / 29.0;
 }
 
-inline double inverse_f(double input) {
+inline double inv_f(double input) {
   if (input > delta)
     return input*input*input;
   return 3*delta*delta * (input - 4.0/29.0);
@@ -25,13 +25,13 @@ void xyz_cielab(const double* input, double* output) {
   double yp = f(input[1] / Yn);
   output[1] = 5 * (f(input[0] / Xn) - yp);
   output[2] = 2 * (yp - f(input[2] / Zn));
-  output[0] = 1.16*yp - 0.16;
+  output[0] = unit_clamp(1.16*yp - 0.16);
 }
 
 void cielab_xyz(const double* input, double* output) {
   double lp = (input[0] + 0.16) / 1.16;
-  output[0] = Xn * inverse_f(lp + input[1] / 5);
-  output[1] = Yn * inverse_f(lp);
-  output[2] = Zn * inverse_f(lp - input[2] / 2);
+  output[0] = Xn * inv_f(lp + input[1] / 5);
+  output[1] = Yn * inv_f(lp);
+  output[2] = Zn * inv_f(lp - input[2] / 2);
 }
 
