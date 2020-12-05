@@ -6,7 +6,7 @@
 
 DEFINE_ERROR(parse_error)
 
-string to_string(const double* value, int count);
+string to_string(const double* value, colorspace);
 
 colorspace stospace(const char*);
 

@@ -1,13 +1,16 @@
 #include "parse.hpp"
+#include "log.hpp"
 #include <sstream>
 
 using namespace std;
 
-string to_string(const double* arr, int count) {
+string to_string(const double* arr, colorspace space) {
   stringstream result;
   result << arr[0];
+  auto count = colorspaces::component_count(space);
   for(int i = 1; i < count; i++)
     result << ' ' << arr[i];
+  log::debug("To-String: Result: " + result.str() + ", first element: " + to_string(arr[0]));
   return result.str();
 }
 

@@ -8,6 +8,7 @@ namespace log {
   using std::string;
   
   void info(const string& text);
+  void error(const string& text);
   void debug(const string& text);
 
   template<const char* scope>

@@ -36,13 +36,13 @@ INSTANTIATE_TEST_SUITE_P(Conversion, GetTest, ::testing::ValuesIn(conversion_tes
 
 bool expect_near(const double* output, const double* expected, const double* input, const double* rgb, string from, string to) {
   auto result = true;
-  auto in_count = colorspaces::component_count(stospace(from.c_str()));
-  auto out_count = colorspaces::component_count(stospace(to.c_str()));
-  for(int i = 0; i < out_count; i++)
+  auto in_space = stospace(from.c_str());
+  auto out_space = stospace(to.c_str());
+  for(int i = 0; i < colorspaces::component_count(out_space); i++)
     if (std::abs(output[i] - expected[i]) > tolerance)
       result = false;
 
-  EXPECT_TRUE(result) << "Conversion from " << from << " to " << to << " is wrong, input: " << to_string(input, in_count) << "\nOutput: " << to_string(output, out_count) << "\nExpected: " << to_string(expected, out_count) << "\nOriginal RGB: " << to_string(rgb, 3) << endl;
+  EXPECT_TRUE(result) << "Conversion from " << from << " to " << to << " is wrong, input: " << to_string(input, in_space) << "\nOutput: " << to_string(output, out_space) << "\nExpected: " << to_string(expected, out_space) << "\nOriginal RGB: " << to_string(rgb, 3) << endl;
   return result;
 }
 
