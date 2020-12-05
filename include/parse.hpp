@@ -4,3 +4,5 @@
 
 using component = unsigned int;
 int parse_code(const string&, component& alpha, component&, component&, component&);
+
+string to_string3(const double* value);

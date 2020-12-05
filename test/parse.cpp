@@ -24,7 +24,7 @@ vector<TestSet> parse_tests = {
   {"#12345g", make_tuple(0, 0, 0, 0, 0)},
   {"#12346", make_tuple(0, 0, 0, 0, 0)},
 };
-INSTANTIATE_TEST_SUITE_P(INst, GetTest, ::testing::ValuesIn(parse_tests));
+INSTANTIATE_TEST_SUITE_P(Parse, GetTest, ::testing::ValuesIn(parse_tests));
 
 TEST_P(GetTest, parse_code) {
   component a, r, g, b;
