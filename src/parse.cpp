@@ -1,11 +1,18 @@
 #include "parse.hpp"
+#include <sstream>
 
-string to_string3(const double* arr) {
-  return std::to_string(arr[0]) + " " + std::to_string(arr[1]) + " " + std::to_string(arr[2]);
+using namespace std;
+
+string to_string(const double* arr, int count) {
+  stringstream result;
+  result << arr[0];
+  for(int i = 1; i < count; i++)
+    result << ' ' << arr[i];
+  return result.str();
 }
 
-colorspace stospace(const string& value) {
-#define CASE(a) if (#a == value) return colorspaces::a;
+colorspace stospace(const char* value) {
+#define CASE(a) if (strcmp(#a, value)) return colorspaces::a;
   CASE(xyz);
   CASE(rgb);
   CASE(jzazbz);
@@ -15,7 +22,7 @@ colorspace stospace(const string& value) {
   CASE(jzczhz);
   CASE(cielch);
 #undef CASE
-  throw parse_error("Unknown colorspace: " + value);
+  throw parse_error("Unknown colorspace: "s + value);
 }
 
 int parse_code(const string& value, component& a, component& r,
