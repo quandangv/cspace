@@ -1,21 +1,34 @@
 #include "parse.hpp"
 #include "log.hpp"
+
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
 string to_string(const double* arr, colorspace space) {
   stringstream result;
-  result << arr[0];
+  result << std::setprecision(30) << arr[0];
   auto count = colorspaces::component_count(space);
   for(int i = 1; i < count; i++)
     result << ' ' << arr[i];
-  log::debug("To-String: Result: " + result.str() + ", first element: " + to_string(arr[0]));
   return result.str();
 }
 
-colorspace stospace(const char* value) {
-#define CASE(a) if (strcmp(#a, value)) return colorspaces::a;
+template<int from_str>
+void str_space(string& str, colorspace& space) {
+#define CASE(a) \
+  if constexpr(from_str) { \
+    if (strcasecmp(str.c_str(), #a)) { \
+      space = colorspaces::a; \
+      return; \
+    } \
+  } else { \
+    if (space == colorspaces::a) { \
+      str = #a; \
+      return; \
+    } \
+  }
   CASE(xyz);
   CASE(rgb);
   CASE(jzazbz);
@@ -25,7 +38,21 @@ colorspace stospace(const char* value) {
   CASE(jzczhz);
   CASE(cielch);
 #undef CASE
-  throw parse_error("Unknown colorspace: "s + value);
+  if constexpr(from_str)
+    throw parse_error("Unknown colorspace: '"s + str + "'");
+  throw parse_error("Unknown colorspace: "s + to_string(space));
+}
+
+colorspace stospace(string&& value) {
+  colorspace result;
+  str_space<1>(value, result);
+  return result;
+}
+
+string to_string(colorspace value) {
+  string result;
+  str_space<0>(result, value);
+  return move(result);
 }
 
 int parse_code(const string& value, component& a, component& r,

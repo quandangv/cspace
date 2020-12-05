@@ -16,4 +16,5 @@ namespace log {
     if constexpr(DEBUG_SCOPES.find(scope) != std::string_view::npos)
       debug(text);
   }
+  constexpr const char* dumb = "dumb";
 }
