@@ -14,6 +14,8 @@ class interface {
   colorspace to{colorspaces::rgb};
 
 public:
-  std::string take_term(string&&);
+  std::string add_term(std::string&&);
+  std::string get_terms();
+  void clear();
 };
 

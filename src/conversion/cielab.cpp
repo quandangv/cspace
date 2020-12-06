@@ -25,7 +25,7 @@ void xyz_cielab(const double* input, double* output) {
   double yp = f(input[1] / Yn);
   output[1] = 5 * (f(input[0] / Xn) - yp);
   output[2] = 2 * (yp - f(input[2] / Zn));
-  output[0] = unit_clamp(1.16*yp - 0.16);
+  output[0] = 1.16*yp - 0.16;
 }
 
 void cielab_xyz(const double* input, double* output) {

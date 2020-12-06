@@ -6,10 +6,10 @@
 
 DEFINE_ERROR(parse_error)
 
-string to_string(const double* value, colorspace);
-string to_string(colorspace);
+std::string to_string(const double* value, colorspace);
+std::string to_string(colorspace);
 
-colorspace stospace(string&&);
+colorspace stospace(std::string&&);
 
 using component = unsigned int;
-int parse_code(const string&, component& alpha, component&, component&, component&);
+int parse_code(const std::string&, component& alpha, component&, component&, component&);

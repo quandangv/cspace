@@ -5,15 +5,20 @@
 #include "parse.hpp"
 #include "log.hpp"
 
+using namespace std;
 constexpr const char scope[] = "main";
 
 int main(int argc, char** argv) {
   interface processor;
+
+  // This will return the next argument as a string
+  // If all arguments have been returned, read from stdin and get the next word.
   auto read_word = [&]()->string {
     static int argi = 1;
     if (argi < argc)
       return string(argv[argi++]);
-      
+
+    // Cache the input string for subsequent calls.
     static string input = string().c_str();
     static size_t pos = 0;
     while(true) {
@@ -38,8 +43,10 @@ int main(int argc, char** argv) {
       }
     }
   };
+
+  // Continually feed terms to the interface;
   while(true) {
-    auto result = processor.take_term(read_word());
+    auto result = processor.add_term(read_word());
     if (!result.empty())
       std::cout << result << std::endl;
   }
