@@ -77,5 +77,33 @@ namespace colorspaces {
     convert_up(value, from, parent);
     convert_down(value, parent, to);
   }
+  
+  void clamp(double& value, double min, double max) {
+    if (value < min)
+      value = min;
+    else if (value > max)
+      value = max;
+  }
+  
+  void clamp(double* value, colorspace space) {
+    switch (space) {
+    case cmyk:
+      clamp(value[3], 0, 1);
+    case rgb:
+      clamp(value[0], 0, 1);
+      clamp(value[1], 0, 1);
+      clamp(value[2], 0, 1);
+      break;
+    case hsl:
+    case hsv:
+      clamp(value[0], 0, 360);
+      clamp(value[1], 0, 1);
+      clamp(value[2], 0, 1);
+      break;
+    case cielab:
+      clamp(value[0], 0, 1);
+      break;
+    }
+  }
 }
 

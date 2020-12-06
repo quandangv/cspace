@@ -26,6 +26,7 @@ namespace colorspaces {
 
   void convert(double* value, colorspace from, colorspace to);
   int component_count(colorspace);
+  void clamp(double* value, colorspace);
 }
 
 

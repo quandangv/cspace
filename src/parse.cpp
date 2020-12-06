@@ -15,7 +15,7 @@ string to_string(const double* arr, colorspace space) {
   return result.str();
 }
 
-template<int from_str>
+template<bool from_str>
 void str_space(string& str, colorspace& space) {
 #define CASE(a) \
   if constexpr(from_str) { \
@@ -45,13 +45,13 @@ void str_space(string& str, colorspace& space) {
 
 colorspace stospace(string&& value) {
   colorspace result;
-  str_space<1>(value, result);
+  str_space<true>(value, result);
   return result;
 }
 
 string to_string(colorspace value) {
   string result;
-  str_space<0>(result, value);
+  str_space<false>(result, value);
   return move(result);
 }
 

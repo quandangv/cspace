@@ -4,7 +4,7 @@
 
 // source: https://en.wikipedia.org/wiki/HSL_and_HSV
 
-template<int l>
+template<bool l>
 void rgb_x(const double* input, double* output) {
   double r = input[0], g = input[1], b = input[2];
   double max = fmax(r, fmax(g, b)),
@@ -28,11 +28,11 @@ void rgb_x(const double* input, double* output) {
 }
 
 void rgb_hsl(const double* input, double* output) {
-  rgb_x<1>(input, output);
+  rgb_x<true>(input, output);
 }
 
 void rgb_hsv(const double* input, double* output) {
-  rgb_x<0>(input, output);
+  rgb_x<false>(input, output);
 }
 
 void hsl_rgb(const double* input, double* output) {

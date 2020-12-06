@@ -15,8 +15,15 @@ int main(int argc, char** argv) {
   // If all arguments have been returned, read from stdin and get the next word.
   auto read_word = [&]()->string {
     static int argi = 1;
-    if (argi < argc)
-      return string(argv[argi++]);
+    if (argi <= argc) {
+      if (argi++ == argc) {
+        // If all arguments have been returned and stay flag is false, make the program quit
+        if (!processor.stay) {
+          processor.quit = true;
+          return "";
+        }
+      } else return string(argv[argi - 1]);
+    }
 
     // Cache the input string for subsequent calls.
     static string input = string().c_str();
@@ -45,9 +52,10 @@ int main(int argc, char** argv) {
   };
 
   // Continually feed terms to the interface;
-  while(true) {
+  while(!processor.quit) {
     auto result = processor.add_term(read_word());
     if (!result.empty())
       std::cout << result << std::endl;
+    log::debug<scope>("End of a term, quit: " + to_string(processor.quit));
   }
 }

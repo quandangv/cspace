@@ -8,14 +8,18 @@
 DEFINE_ERROR(interface_error);
 
 class interface {
+public:
   double data[4];
   int count{0};
   colorspace from{colorspaces::rgb};
   colorspace to{colorspaces::rgb};
+  bool clamp, quit, stay;
 
-public:
   std::string add_term(std::string&&);
-  std::string get_terms();
+  std::string get_terms() const;
   void clear();
+private:
+  template<bool execute, bool expanded>
+  bool control_term(const std::string& term);
 };
 
