@@ -63,12 +63,13 @@ vector<TestSet> interface_tests = {
   {{"xyz! hsv: cielab! rgb:"}, {""}, {"cielab! rgb:"}, {"xyz! hsv:"}},
   {{"0.1 0.2 0.3"}, {"0.1-0.2-0.3\n"}, {}, {"0.1 0.2 0.3"}},
   {{"rgb: HSV! 1 0 0 0 1 1 0.69"}, {"0-1-1\n180-1-1\n"}, {"rgb: hsv! 0.69"}, {"1 0"}},
-  {{"c. 1 2 3 hsv! 1 1 2"}, {"1-1-1\n240-0.5-1\n"}, {}, {"2 3"}},
+  {{"c. on 1 2 3 hsv! 1 1 2"}, {"1-1-1\n240-0.5-1\n"}, {}, {"2 3"}},
   {{"hex! hsv: 150 0.75 0.75"}, {"30BF78\n"}, {"rgb!"}, {"rgb:"}},
   {{"xyz: hsv! 00ffffh"}, {"180-1-1\n"}, {"xyz: hsv!"}, {}},
   {{"axxx! hsv! xyz: 8000FFFFh"}, {"0.501961-180-1-1\n"}, {"xyz: hsv!"}, {}},
   {{"xxxa! hsv! xyz: 00FFFF80h"}, {"180-1-1-0.501961\n"}, {"xyz: hsv!"}, {}},
-  {{"xxxa! hex! hsv: alpha: 180 1 1 0.5  60 0.5 0.5 0.2"}, {"00FFFF80\n80804033\n"}, {"hsv: rgb!"}, {}},
+  {{"xxxa! hex! hsv: alpha: on 180 1 1 0.5  60 0.5 0.5 0.2 alpha: off 0 1 1 0.69"}, {"00FFFF80\n80804033\nFF0000\n"}, {"hsv: rgb! 0.69"}, {}},
+  {{"p. 3 0.987654 0.123456 0.654987 0.1 1 0.123456"}, {"0.988-0.123-0.655\n0.1-1-0.123\n"}, {}, {}},
 };
 INSTANTIATE_TEST_SUITE_P(Interface, GetTest, ::testing::ValuesIn(interface_tests));
 

@@ -14,3 +14,7 @@ colorspace stospace(std::string&&);
 
 using component = unsigned int;
 int parse_code(const std::string&, component& alpha, component&, component&, component&, bool alpha_first = true);
+
+bool parse(std::string, double&);
+bool parse(std::string, int&);
+bool parse(std::string, bool&);

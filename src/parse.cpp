@@ -43,7 +43,7 @@ void str_space(string& str, colorspace& space) {
   CASE(cielch);
 #undef CASE
   if constexpr(from_str)
-    throw parse_error("Unknown colorspace: '"s + str + "'");
+    throw parse_error("Unknown colorspace: "s + str);
   throw parse_error("Unknown colorspace: "s + to_string(space));
 }
 
@@ -128,4 +128,26 @@ int parse_code(const string& value, component& a, component& r,
   if(error)
     return 0;
   return divider;
+}
+
+bool parse(string str, double& result) {
+  int len;
+  return sscanf(str.c_str(), "%lf%n", &result, &len) == 1 && len == str.size();
+}
+
+bool parse(string str, int& result) {
+  int len;
+  return sscanf(str.c_str(), "%d%n", &result, &len) == 1 && len == str.size();
+}
+
+bool parse(string str, bool& result) {
+  auto c_str = str.c_str();
+#define CMP(a) strcasecmp(c_str, #a) == 0
+  if (CMP(on) || CMP(true))
+    result = true;
+  else if (CMP(off) || CMP(false))
+    result = false;
+  else return false;
+  return true;
+#undef CMP
 }

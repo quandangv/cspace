@@ -47,18 +47,17 @@ bool interface::control_term(const string& term) {
       action(); \
     } \
   }
-#define FLAG_CONTROL(a, a_full, a_desc) CONTROL_TERM a_full = true; CONTROL_TERM_END(a, a_full!, a_desc)
+#define FLAG_TERM(a, a_full, a_desc) CONTROL_TERM a_full = true; CONTROL_TERM_END(a, a_full!, a_desc)
+#define WAIT_TERM(a, a_full, a_desc) CONTROL_TERM waiting_terms.emplace_back(#a_full); CONTROL_TERM_END(a, a_full:, a_desc)
 
-  FLAG_CONTROL(c, clamp, "Clamp each output to the range of its colorspace")
+  WAIT_TERM(c, clamp, "Clamp each output to the range of its colorspace")
 
   CONTROL_TERM
   logger::debug<scope>("Interface: help switch called");
   control_term<false, false>("");
   CONTROL_TERM_END(h, help!, "Show this help message")
-  
-  CONTROL_TERM
-  take_alpha = true;
-  CONTROL_TERM_END(a, alpha:, "Read alpha along with other components")
+
+  WAIT_TERM(a, alpha, "Read alpha along with other components")
   
   CONTROL_TERM
   alpha_first = true;
@@ -74,22 +73,22 @@ bool interface::control_term(const string& term) {
   to = colorspaces::rgb;
   CONTROL_TERM_END(, hex!, "Print output colors in hexedecimal code")
 
-  CONTROL_TERM
-  waiting_terms.emplace_back("precision");
-  CONTROL_TERM_END(p, precision!, "Set output precision")
+  WAIT_TERM(p, precision, "Set output precision")
   
-  FLAG_CONTROL(q, quit, "Quit program")
+  FLAG_TERM(q, quit, "Quit program")
   
-  FLAG_CONTROL(s, stay, "Wait for further input rather that quitting immediately")
+  FLAG_TERM(s, stay, "Wait for further input rather that quitting immediately")
 #undef CONTROL_TERM
 #undef CONTROL_TERM_END
+#undef FLAG_TERM
+#undef WAIT_TERM
   // }}}
 
   // Ending of the help message {{{
   if constexpr(!execute) {
     cout << "\n\nTerms affecting the output (such as clamp, precision) must appear before the input to take effect\n";
     cout << "\nExample commands:";
-    cout INDENT(example_indent) << "  cspace hsv! #FF0000" << "Convert #FF0000 to HSV";
+    cout INDENT(example_indent) << "  cspace hsv! FF0000h" << "Convert #FF0000 to HSV";
     cout INDENT(example_indent) << "  cspace hsl! 1 0 0" << "Convert #FF0000 to HSL";
     cout INDENT(example_indent) << "  cspace cielab! hsl: 180 0.5 0.5" << "Convert from HSL to CIELab";
     cout INDENT(example_indent) << "  cspace c. rgb! hsl: 180 0.5 1.1" << "Convert from HSL to RGB and clamp to RGB range";
@@ -103,20 +102,18 @@ bool interface::control_term(const string& term) {
 std::string interface::add_term(string&& term) {
   logger::debug<scope>("Interface-Term: '" + term + "'");
   if (term.empty()) return "";
-  if (int len; sscanf(term.c_str(), "%lf%n", &data[count], &len) == 1 && len == term.size()) {
-    
-    // Successfully parsed the term as a number, check for waiting terms to feed
-    if (!waiting_terms.empty()) {
-      // This will not increment count, which means the parsed term is not considered data
-      feed_waiting_term(waiting_terms.back(), data[count]);
-      waiting_terms.pop_back();
-    } else if (++count == colorspaces::component_count(from) + (int)take_alpha) {
-      if (take_alpha) {
+  if (!waiting_terms.empty()) {
+    logger::debug<scope>("Interface: Feed waiting terms: "+term);
+    feed_waiting_term(waiting_terms.back(), move(term));
+    waiting_terms.pop_back();
+  } else if (parse(term, data[count])) {
+    if (++count == colorspaces::component_count(from) + (int)alpha) {
+      if (alpha) {
         if (alpha_first) {
-          alpha = data[0];
+          alpha_val = data[0];
           for(int i = 1; i < count; i++)
             data[i-1] = data[i];
-        } else alpha = data[count-1];
+        } else alpha_val = data[count-1];
         count--;
       }
       return pop_data(from, to);
@@ -151,7 +148,7 @@ std::string interface::add_term(string&& term) {
           auto divider = parse_code(term, a, r, g, b, alpha_first);
           if (divider != 0) {
             makesure_empty();
-            alpha = static_cast<double>(a) / divider;
+            alpha_val = static_cast<double>(a) / divider;
             data[0] = static_cast<double>(r) / divider;
             data[1] = static_cast<double>(g) / divider;
             data[2] = static_cast<double>(b) / divider;
@@ -184,10 +181,22 @@ void interface::clear() {
   count = 0;
 }
 
-void interface::feed_waiting_term(const string& term, double data) {
-  if (term == "precision")
-    output_stream << std::setprecision((int)data);
-  else throw interface_error("Interface: Unknown waiting term: " + term);
+void interface::feed_waiting_term(const string& name, string&& data) {
+  if (name == "precision") {
+    if (int val; parse(data, val))
+      output_stream << std::setprecision(val);
+    else throw interface_error("Interface-precision: Unknown term argument: "+data);
+#define BOOL_WAIT_TERM(term) \
+  } else if (name == #term) { \
+    if (bool val; parse(data, val)) { \
+      term = val; \
+    } else if (data == "!") \
+      term = !term; \
+    else throw interface_error("Interface-"#term": Unknown term argument: "+data);
+  BOOL_WAIT_TERM(alpha)
+  BOOL_WAIT_TERM(clamp)
+  } else throw application_error("Interface: Unknown waiting term: " + name);
+#undef BOOL_WAIT_TERM
 }
 
 string interface::pop_data(colorspace from, colorspace to) {
@@ -202,27 +211,27 @@ string interface::pop_data(colorspace from, colorspace to) {
 
     // print hex code
     // std::hex have already been passed to output_stream in the hex! term
-    if (alpha != 1.0 && alpha_first) {
-      output_stream << std::setw(2) << (int)round(alpha * 255.0);
-      alpha = 1.0;
+    if (alpha_val != 1.0 && alpha_first) {
+      output_stream << std::setw(2) << (int)round(alpha_val * 255.0);
+      alpha_val = 1.0;
     }
     for(int i = 0, count = colorspaces::component_count(to); i < count; i++)
       output_stream << std::setw(2) << (int)round(data[i]*255);
-    if (alpha != 1.0 && !alpha_first) {
-      output_stream << std::setw(2) << (int)round(alpha * 255.0);
-      alpha = 1.0;
+    if (alpha_val != 1.0 && !alpha_first) {
+      output_stream << std::setw(2) << (int)round(alpha_val * 255.0);
+      alpha_val = 1.0;
     }
   } else {
-    if (alpha != 1.0 & alpha_first) {
-      output_stream << alpha << separator;
-      alpha = 1.0;
+    if (alpha_val != 1.0 & alpha_first) {
+      output_stream << alpha_val << separator;
+      alpha_val = 1.0;
     }
     output_stream << data[0];
     for(int i = 1, count = colorspaces::component_count(to); i < count; i++)
       output_stream << separator << data[i];
-    if (alpha != 1.0 & !alpha_first) {
-      output_stream << separator << alpha;
-      alpha = 1.0;
+    if (alpha_val != 1.0 & !alpha_first) {
+      output_stream << separator << alpha_val;
+      alpha_val = 1.0;
     }
   }
   return output_stream.str();

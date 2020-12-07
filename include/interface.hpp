@@ -19,8 +19,8 @@ public:
   std::string separator{" "};
 
   // Support for hexedecimal color code and alpha component
-  bool hex{false}, alpha_first{true}, take_alpha{false};
-  double alpha{1.0};
+  bool hex{false}, alpha_first{true}, alpha{false};
+  double alpha_val{1.0};
 
   std::string add_term(std::string&&);
   std::string get_terms() const;
@@ -33,7 +33,7 @@ private:
   
   template<bool execute, bool expanded>
   bool control_term(const std::string& term);
-  void feed_waiting_term(const std::string& term, double data);
+  void feed_waiting_term(const std::string& term, std::string&& data);
   std::string pop_data(colorspace, colorspace);
 };
 
