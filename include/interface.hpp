@@ -11,7 +11,7 @@ DEFINE_ERROR(interface_error);
 
 class interface {
 public:
-  double data[4];
+  double data[5];
   int count{0};
   colorspace from{colorspaces::rgb};
   colorspace to{colorspaces::rgb};
@@ -31,8 +31,11 @@ private:
   std::stringstream output_stream;
   std::vector<std::string> waiting_terms;
   
-  template<bool execute, bool expanded>
-  bool control_term(const std::string& term);
+  void print_help();
+  void process_short_switches(const std::string& switches);
+  bool process_long_switch(const std::string& name);
+  template<bool, bool> bool switches(const std::string&);
+
   void feed_waiting_term(const std::string& term, std::string&& data);
   std::string pop_data(colorspace, colorspace);
 };
