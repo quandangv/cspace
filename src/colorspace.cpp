@@ -1,6 +1,6 @@
 #include "colorspace.hpp"
 
-#include "log.hpp"
+#include "logger.hpp"
 #include "conversion.hpp"
 
 using namespace std;
@@ -30,7 +30,7 @@ namespace colorspaces {
   #define CASE_BASE(a, b, method) \
     case a << 8 | b: \
       method(value, value); \
-      log::debug<scope>("Direct conversion: "#a" to "#b); \
+      logger::debug<scope>("Direct conversion: "#a" to "#b); \
       break;
   #define CASE(a, b) \
     CASE_BASE(a, b, a##_##b) \
@@ -67,7 +67,7 @@ namespace colorspaces {
   }
     
   void convert(double* value, colorspace from, colorspace to) {
-    log::debug<scope>("Convert from " + to_string(from) + " to " + to_string(to));
+    logger::debug<scope>("Convert from " + to_string(from) + " to " + to_string(to));
     if (from == to) return;
     auto parent = xyz;
     colorspace common;

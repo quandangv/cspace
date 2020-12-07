@@ -8,22 +8,40 @@
 
 using namespace std;
 struct TestSet {
-  vector<string> terms, result, expected, not_expected;
+  string terms_str, result_str, expected_str, not_expected_str;
+  vector<string> split_words(const string& value) const {
+    vector<string> result;
+    stringstream ss(value);
+    while(ss.good()) {
+      string term;
+      ss >> term;
+      if (!term.empty()) {
+        if (term == "_")
+          term = "";
+        result.emplace_back(move(term));
+      }
+    }
+    return move(result);
+  }
   void check(interface& item) const {
     item.clear();
-    EXPECT_EQ(result.size(), terms.size()) << "The number of terms and expected results have to match";
-    // feed terms to the interface and check the result
-    for(int i = 0; i < terms.size(); i++)
-      EXPECT_EQ(result[i], item.add_term(string(terms[i])));
+    item.separator = "-";
+
+    auto terms = split_words(terms_str);
+    auto expected = split_words(expected_str);
+    auto not_expected = split_words(not_expected_str);
     
-    // build the list of terms from the interface
-    auto state = item.get_terms();
-    vector<string>final_terms;
-    stringstream ss(state);
-    while(ss.good()) {
-      final_terms.emplace_back();
-      ss >> final_terms.back();
+    // feed terms to the interface and check the result
+    string real_result = "";
+    for(int i = 0; i < terms.size(); i++) {
+      auto r = item.add_term(string(terms[i]));
+      if (!r.empty())
+        real_result += r + "\n";
     }
+    EXPECT_EQ(real_result, result_str);
+
+    auto state = item.get_terms();
+    auto final_terms = split_words(state);
 
     // check if the list of terms contains unexpected terms or not contain the expected
     auto contain = [&](string item)->bool {
@@ -33,7 +51,7 @@ struct TestSet {
       return false;
     };
     for(auto& term : expected)
-      EXPECT_TRUE(contain(term)) << "Expected term '" << term << "' in result '" << state << "' of test set";
+      EXPECT_TRUE(contain(term)) << "Expected term '" << term << "' in result '" << state << "' of test set: " << terms_str;
     for(auto& term : not_expected)
       EXPECT_FALSE(contain(term)) << "Didn't expect term '" << term << "' in result '" << state << "' of test set";
   }
@@ -42,10 +60,12 @@ struct TestSet {
 class GetTest : public ::testing::Test, public ::testing::WithParamInterface<TestSet> {};
 
 vector<TestSet> interface_tests = {
-  {{"xyz!", "hsv:", "cielab!", "rgb:"}, {"","","",""}, {"cielab!", "rgb:"}, {"xyz!", "hsv:"}},
-  {{"0.1", "0.2", "0.3"}, {"", "", "0.1 0.2 0.3"}, {}, {"0.1", "0.2", "0.3"}},
-  {{"rgb:", "HSV!", "1", "0", "0", "0", "1", "1", "0.69"}, {"", "", "", "", "0 1 1", "", "", "180 1 1", ""}, {"rgb:", "hsv!", "0.69"}, {"1", "0"}},
-  {{"c.", "1", "2", "3", "hsv!", "1", "1", "2"}, {"", "", "", "1 1 1", "", "", "", "240 0.5 1"}, {}, {"2", "3"}},
+  {{"xyz! hsv: cielab! rgb:"}, {""}, {"cielab! rgb:"}, {"xyz! hsv:"}},
+  {{"0.1 0.2 0.3"}, {"0.1-0.2-0.3\n"}, {}, {"0.1 0.2 0.3"}},
+  {{"rgb: HSV! 1 0 0 0 1 1 0.69"}, {"0-1-1\n180-1-1\n"}, {"rgb: hsv! 0.69"}, {"1 0"}},
+  {{"c. 1 2 3 hsv! 1 1 2"}, {"1-1-1\n240-0.5-1\n"}, {}, {"2 3"}},
+  {{"argb! hsv: 150 0.75 0.75"}, {"30BF78\n"}, {"rgb!"}, {"rgb:"}},
+  {{"xyz: hsv! 00ffffh"}, {"180-1-1\n"}, {"xyz: hsv!"}, {}},
 };
 INSTANTIATE_TEST_SUITE_P(Interface, GetTest, ::testing::ValuesIn(interface_tests));
 

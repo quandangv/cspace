@@ -3,7 +3,7 @@
 #include "conversion.hpp"
 #include "interface.hpp"
 #include "parse.hpp"
-#include "log.hpp"
+#include "logger.hpp"
 
 using namespace std;
 constexpr const char scope[] = "main";
@@ -53,9 +53,14 @@ int main(int argc, char** argv) {
 
   // Continually feed terms to the interface;
   while(!processor.quit) {
-    auto result = processor.add_term(read_word());
-    if (!result.empty())
-      std::cout << result << std::endl;
-    log::debug<scope>("End of a term, quit: " + to_string(processor.quit));
+    try {
+      auto result = processor.add_term(read_word());
+      if (!result.empty())
+        std::cout << result << std::endl;
+      logger::debug<scope>("End of a term, quit: " + to_string(processor.quit));
+    } catch (const exception& err) {
+      logger::error(err.what());
+    }
   }
+  processor.makesure_empty();
 }

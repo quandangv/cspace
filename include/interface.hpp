@@ -4,7 +4,7 @@
 
 #include "conversion.hpp"
 #include "parse.hpp"
-#include "log.hpp"
+#include "logger.hpp"
 #include "error.hpp"
 
 DEFINE_ERROR(interface_error);
@@ -16,10 +16,16 @@ public:
   colorspace from{colorspaces::rgb};
   colorspace to{colorspaces::rgb};
   bool clamp, quit, stay;
+  std::string separator{" "};
+
+  // Support for hexedecimal color code
+  bool hex{false}, alpha_first{true};
+  unsigned int alpha{65535};
 
   std::string add_term(std::string&&);
   std::string get_terms() const;
   void clear();
+  void makesure_empty() const;
   
 private:
   std::stringstream output_stream;
@@ -28,5 +34,6 @@ private:
   template<bool execute, bool expanded>
   bool control_term(const std::string& term);
   void feed_waiting_term(const std::string& term, double data);
+  std::string pop_data(colorspace, colorspace);
 };
 

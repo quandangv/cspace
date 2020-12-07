@@ -1,15 +1,19 @@
 #include "parse.hpp"
-#include "log.hpp"
 
 #include <sstream>
 #include <iomanip>
 
+#include "logger.hpp"
+
 using namespace std;
 
 string to_string(const double* arr, colorspace space) {
+  return to_string(arr, colorspaces::component_count(space));
+}
+
+string to_string(const double* arr, int count) {
   stringstream result;
   result  << arr[0];
-  auto count = colorspaces::component_count(space);
   for(int i = 1; i < count; i++)
     result << ' ' << arr[i];
   return result.str();
@@ -56,9 +60,7 @@ string to_string(colorspace value) {
 }
 
 int parse_code(const string& value, component& a, component& r,
-                                    component& g, component& b) {
-  if (value[0] != '#')
-    return 0;
+               component& g, component& b, bool alpha_first) {
   bool error = false;
   int divider;
   auto str = value.c_str();
@@ -75,40 +77,49 @@ int parse_code(const string& value, component& a, component& r,
 	};
 
 	switch(value.length()) {
-  	case 5:
-    	a = hex(1);
-    	str++;
-    	if (false) {
-		case 4:
+  	case 4:
+    	if (alpha_first) {
+      	a = hex(0);
+      	str++;
+    	} else if (true) {
+      	a = hex(3);
+    	} else {
+		case 3:
   			a = 15;
     	}
-  		r = hex(1);
-  		g = hex(2);
-  		b = hex(3);
+  		r = hex(0);
+  		g = hex(1);
+  		b = hex(2);
   		divider = 15;
 			break;
-		case 9:
-			a = (hex(1) * 16 + hex(2));
-			str += 2;
-			if (false) {
-		case 7:
+		case 8:
+  		if (alpha_first) {
+  			a = (hex(0) * 16 + hex(1));
+  			str += 2;
+  		} else if (true) {
+  			a = (hex(6) * 16 + hex(7));
+  		} else {
+		case 6:
     		a = 255;
 			}
-			r = hex(1) * 16 + hex(2);
-			g = hex(3) * 16 + hex(4);
-			b = hex(5) * 16 + hex(6);
+			r = hex(0) * 16 + hex(1);
+			g = hex(2) * 16 + hex(3);
+			b = hex(4) * 16 + hex(5);
 			divider = 255;
 			break;
-		case 17:
-			a = hex(1)*4096 + hex(2)*256 + hex(3)*16 + hex(4);
-			str += 4;
-			if (false) {
-		case 13:
+		case 16:
+  		if (alpha_first) {
+  			a = hex(0)*4096 + hex(1)*256 + hex(2)*16 + hex(3);
+  			str += 4;
+  		} else if (true) {
+  			a = hex(12)*4096 + hex(13)*256 + hex(14)*16 + hex(15);
+  		} else {
+		case 12:
   			a = 65535;
 			}
-			r = hex(1)*4096 + hex(2)*256 + hex(3)*16 + hex(4);
-			g = hex(5)*4096 + hex(6)*256 + hex(7)*16 + hex(8);
-			b = hex(9)*4096 + hex(10)*256 + hex(11)*16 + hex(12);
+			r = hex(0)*4096 + hex(1)*256 + hex(2)*16 + hex(3);
+			g = hex(4)*4096 + hex(5)*256 + hex(6)*16 + hex(7);
+			b = hex(8)*4096 + hex(9)*256 + hex(10)*16 + hex(11);
 			divider = 65535;
 			break;
 		default:
