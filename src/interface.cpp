@@ -12,13 +12,15 @@ constexpr const char scope[] = "interface";
 
 template<bool execute, bool expanded>
 bool interface::control_term(const string& term) {
+  if constexpr(!execute)
+    logger::debug<scope>("Interface: help called");
   // Start of the help message {{{
   constexpr int term_indent = 20;
   constexpr int example_indent = 36;
 #define INDENT(size) << endl << std::setw(size) << std::left 
   if constexpr(!execute) {
-    cout << "Usage: cspace [TERM] [TERM] ...\n";
-    cout << "Converts colors from one color space to another. Terms are floating-point numbers that will be the input for the conversions. They can also be one of the following:\n";
+    cout << "Converts colors from one color space to another.\nUsage: cspace [TERM] [TERM] ...\n";
+    cout << "Terms are floating-point numbers that will be the input for the conversions. They can also be one of the following:\n";
     cout INDENT(term_indent) << "  {colorspace}:" << "Convert from {colorspace} (RGB by default)";
     cout INDENT(term_indent) << "  {colorspace}!" << "Convert to {colorspace} (RGB by default)";
   }
@@ -48,24 +50,29 @@ bool interface::control_term(const string& term) {
 #define FLAG_CONTROL(a, a_full, a_desc) CONTROL_TERM a_full = true; CONTROL_TERM_END(a, a_full!, a_desc)
 
   FLAG_CONTROL(c, clamp, "Clamp each output to the range of its colorspace")
-  
+
   CONTROL_TERM
+  logger::debug<scope>("Interface: help switch called");
   control_term<false, false>("");
   CONTROL_TERM_END(h, help!, "Show this help message")
   
   CONTROL_TERM
-  hex = true;
-  output_stream << std::uppercase << std::setfill('0') << std::hex;
-  to = colorspaces::rgb;
+  take_alpha = true;
+  CONTROL_TERM_END(a, alpha:, "Read alpha along with other components")
+  
+  CONTROL_TERM
   alpha_first = true;
-  CONTROL_TERM_END(, argb!, "Print output colors in hexedecimal [A]RGB code")
+  CONTROL_TERM_END(, axxx!, "Read and write alpha component before other components")
+  
+  CONTROL_TERM
+  alpha_first = false;
+  CONTROL_TERM_END(, xxxa!, "Read and write alpha component after other components")
   
   CONTROL_TERM
   hex = true;
   output_stream << std::uppercase << std::setfill('0') << std::hex;
   to = colorspaces::rgb;
-  alpha_first = false;
-  CONTROL_TERM_END(, rgba!, "Print output colors in hexedecimal RGB[A] code")
+  CONTROL_TERM_END(, hex!, "Print output colors in hexedecimal code")
 
   CONTROL_TERM
   waiting_terms.emplace_back("precision");
@@ -103,7 +110,15 @@ std::string interface::add_term(string&& term) {
       // This will not increment count, which means the parsed term is not considered data
       feed_waiting_term(waiting_terms.back(), data[count]);
       waiting_terms.pop_back();
-    } else if (++count == colorspaces::component_count(from)) {
+    } else if (++count == colorspaces::component_count(from) + (int)take_alpha) {
+      if (take_alpha) {
+        if (alpha_first) {
+          alpha = data[0];
+          for(int i = 1; i < count; i++)
+            data[i-1] = data[i];
+        } else alpha = data[count-1];
+        count--;
+      }
       return pop_data(from, to);
     }
   } else {
@@ -126,16 +141,17 @@ std::string interface::add_term(string&& term) {
         to = stospace(move(term));
         break;
       case '.':
+        logger::debug<scope>("Interface: single-character switches");
         control_term<true, false>(term);
         break;
       case 'h':
       case 'H':
         {
-          unsigned int r, g, b;
-          auto divider = parse_code(term, alpha, r, g, b, alpha_first);
+          unsigned int a, r, g, b;
+          auto divider = parse_code(term, a, r, g, b, alpha_first);
           if (divider != 0) {
             makesure_empty();
-            alpha *= 65535 / divider;
+            alpha = static_cast<double>(a) / divider;
             data[0] = static_cast<double>(r) / divider;
             data[1] = static_cast<double>(g) / divider;
             data[2] = static_cast<double>(b) / divider;
@@ -186,20 +202,28 @@ string interface::pop_data(colorspace from, colorspace to) {
 
     // print hex code
     // std::hex have already been passed to output_stream in the hex! term
-    if (alpha != 65535 && alpha_first) {
-      output_stream << std::setw(2) << (int)round(alpha / 257.0);
-      alpha = 65535;
+    if (alpha != 1.0 && alpha_first) {
+      output_stream << std::setw(2) << (int)round(alpha * 255.0);
+      alpha = 1.0;
     }
     for(int i = 0, count = colorspaces::component_count(to); i < count; i++)
       output_stream << std::setw(2) << (int)round(data[i]*255);
-    if (alpha != 65535 && !alpha_first) {
-      output_stream << std::setw(2) << (int)round(alpha / 257.0);
-      alpha = 65535;
+    if (alpha != 1.0 && !alpha_first) {
+      output_stream << std::setw(2) << (int)round(alpha * 255.0);
+      alpha = 1.0;
     }
   } else {
+    if (alpha != 1.0 & alpha_first) {
+      output_stream << alpha << separator;
+      alpha = 1.0;
+    }
     output_stream << data[0];
     for(int i = 1, count = colorspaces::component_count(to); i < count; i++)
       output_stream << separator << data[i];
+    if (alpha != 1.0 & !alpha_first) {
+      output_stream << separator << alpha;
+      alpha = 1.0;
+    }
   }
   return output_stream.str();
 }

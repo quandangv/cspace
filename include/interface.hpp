@@ -18,9 +18,9 @@ public:
   bool clamp, quit, stay;
   std::string separator{" "};
 
-  // Support for hexedecimal color code
-  bool hex{false}, alpha_first{true};
-  unsigned int alpha{65535};
+  // Support for hexedecimal color code and alpha component
+  bool hex{false}, alpha_first{true}, take_alpha{false};
+  double alpha{1.0};
 
   std::string add_term(std::string&&);
   std::string get_terms() const;

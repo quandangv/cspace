@@ -127,7 +127,5 @@ int parse_code(const string& value, component& a, component& r,
 	}
   if(error)
     return 0;
-  if (a == 0)
-    r = g = b = 0;
   return divider;
 }

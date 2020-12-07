@@ -19,7 +19,7 @@ vector<TestSet> parse_tests = {
   {"87654321", make_tuple(0xFF, 0x87, 0x65, 0x43, 0x21)},
   {"123456789ABC", make_tuple(0xFFFF, 0xFFFF, 0x1234, 0x5678, 0x9ABC)},
   {"FEDCBA9876543210", make_tuple(0xFFFF, 0xFEDC, 0xBA98, 0x7654, 0x3210)},
-  {"0123", make_tuple(15, 0, 0, 0, 0)},
+  {"0123", make_tuple(15, 0, 1, 2, 3)},
   {"12345g", make_tuple(0, 0, 0, 0, 0)},
   {"12346", make_tuple(0, 0, 0, 0, 0)},
 };
