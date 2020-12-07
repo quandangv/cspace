@@ -35,6 +35,7 @@ void str_space(string& str, colorspace& space) {
   }
   CASE(xyz);
   CASE(rgb);
+  CASE(cmyk);
   CASE(jzazbz);
   CASE(cielab);
   CASE(hsl);

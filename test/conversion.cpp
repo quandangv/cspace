@@ -34,7 +34,7 @@ vector<TestSet> conversion_tests{
 };
 INSTANTIATE_TEST_SUITE_P(Conversion, GetTest, ::testing::ValuesIn(conversion_tests));
 
-bool expect_near(const double* output, const double* expected, const double* input, const double* rgb, string from, string to) {
+bool expect_near(const double* output, const double* expected, const double* input, const double* rgb, string from, string to, string msg = "") {
   auto result = true;
   auto in_space = stospace(from.c_str());
   auto out_space = stospace(to.c_str());
@@ -42,7 +42,7 @@ bool expect_near(const double* output, const double* expected, const double* inp
     if (std::abs(output[i] - expected[i]) > tolerance)
       result = false;
 
-  EXPECT_TRUE(result) << "Conversion from " << from << " to " << to << " is wrong, input: " << to_string(input, in_space) << "\nOutput: " << to_string(output, out_space) << "\nExpected: " << to_string(expected, out_space) << "\nOriginal RGB: " << to_string(rgb, 3) << endl;
+  EXPECT_TRUE(result) << "Conversion from " << from << " to " << to << " is wrong, input: " << to_string(input, in_space) << "\nOutput: " << to_string(output, out_space) << "\nExpected: " << to_string(expected, out_space) << "\nOriginal RGB: " << to_string(rgb, 3) << endl << msg << endl;
   return result;
 }
 
@@ -52,7 +52,7 @@ TEST_P(GetTest, direct) {
   if (expect_near(test.comp, test_set.b.comp, test_set.a.comp, test_set.rgb.comp, #a, #b)) { \
     test = test_set.a; \
     a##_##b(test.comp, test.comp); \
-    expect_near(test.comp, test_set.b.comp, test_set.a.comp, test_set.rgb.comp, #a, #b" (in-place)"); \
+    expect_near(test.comp, test_set.b.comp, test_set.a.comp, test_set.rgb.comp, #a, #b, "In place test failed"); \
   }
 #define TEST_ROUTE(a, b) TEST_METHOD(a, b) TEST_METHOD(b, a)
   color test;
