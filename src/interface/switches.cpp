@@ -2,6 +2,8 @@
 
 #include <iomanip>
 
+#include "format.hpp"
+
 using std::cout;
 using std::string;
 using std::endl;
@@ -14,12 +16,12 @@ bool interface::switches(const string& term) {
   #define INDENT(size) << endl << std::setw(size) << std::left 
 
   // Start of the help message {{{
-  constexpr int term_indent = 25;
+  constexpr int term_indent = 24 + FORMAT_SIZE * 3;
   if constexpr(help && !expanded) {
     logger::debug<scope>("Interface: help called");
-    cout << "Converts colors from one color space to another.\nUsage: cspace [TERM] [TERM] ...\nTerms are floating-point numbers that will be the input for the conversions, but they can also be one of the following:\n";
-    cout INDENT(term_indent) << "  {colorspace}:" << "Convert from {colorspace} (RGB by default)";
-    cout INDENT(term_indent) << "  {colorspace}!" << "Convert to {colorspace} (RGB by default)";
+    cout << "Converts colors from one color space to another.\n" FORMAT_GREEN_BOLD(Usage: cspace [TERM] [TERM] [DATA] ...) "\n  Data are floating-point numbers that will be the input for the conversions\n  Terms are one of the following:\n";
+    cout INDENT(term_indent) << "  " FORMAT_GREEN({colorspace}:) FORMAT_EMPTY2 << "Convert from " FORMAT_BLUE({colorspace}) " (RGB by default)";
+    cout INDENT(term_indent) << "  " FORMAT_GREEN({colorspace}!) FORMAT_EMPTY2 << "Convert to " FORMAT_BLUE({colorspace}) " (RGB by default)";
   }
   // }}}
 
@@ -35,9 +37,9 @@ bool interface::switches(const string& term) {
       }; \
       if constexpr(help) { \
         if constexpr(#a == "") \
-          cout INDENT(term_indent) << "  "#a_full" "#tail << a_desc; \
+          cout INDENT(term_indent) << "  " FORMAT_GREEN(a_full) FORMAT_EMPTY " " FORMAT_BLUE(tail) << a_desc; \
         else \
-          cout INDENT(term_indent) << "  "#a"., "#a_full" "#tail << a_desc; \
+          cout INDENT(term_indent) << "  " FORMAT_GREEN(a.) ", " FORMAT_GREEN(a_full) " " FORMAT_BLUE(tail) << a_desc; \
       } else if constexpr(expanded) { \
         if (term == #a_full) { \
           action(); \
@@ -87,7 +89,7 @@ bool interface::switches(const string& term) {
   to = colorspaces::rgb;
   CONTROL_TERM_END(, hex!, , "Print output colors in hexedecimal code")
 
-  WAIT_TERM(p, precision, {num}, "Set output precision to {num} decimal places")
+  WAIT_TERM(p, precision, {num}, "Set output precision to " FORMAT_BLUE({num}) " decimal places")
   
   FLAG_TERM(q, quit, , "Quit program")
   
@@ -100,19 +102,18 @@ bool interface::switches(const string& term) {
 
   // Ending of the help message {{{
   if constexpr(help && !expanded) {
-    constexpr int example_indent = 40;
-    cout << "\n\nTerms affecting the output (such as clamp, precision) must appear before the input to take effect. Passing '!' to on/off terns would toggle them";
-    cout << "\nSupported colorspaces: " << list_colorspaces(", ") << endl;
-    cout << "\nExample commands:";
-    cout INDENT(example_indent) << "  cspace hsv! FF0000h" << "Convert #FF0000 to HSV";
-    cout INDENT(example_indent) << "  cspace hsl! 1 0 0" << "Convert #FF0000 to HSL";
-    cout INDENT(example_indent) << "  cspace cielab! hsl: 180 0.5 0.5" << "From HSL to CIELab";
-    cout INDENT(example_indent) << "  cspace clamp: on rgb! hsl: 180 0 1.1" << "From HSL to RGB and clamp to RGB range";
-    cout INDENT(example_indent) << "  cspace p. 9 CIELab! 0AFh" << "#00AAFF to Lab with 9 decimal places";
-    cout INDENT(example_indent) << "  cspace p. 9 CIELab! FFFF0000FFFFh" << "Convert 16-bit colors";
-    cout INDENT(example_indent) << "  cspace hsv! 80FF0000h" << "#80FF0000 in argb format to HSV";
-    cout INDENT(example_indent) << "  cspace HSV! xxxa! FF000080H" << "#FF000080 in rgba format to HSV";
-    cout INDENT(example_indent) << "  cspace cs." << "Activate clamping and wait for input";
+    constexpr int example_indent = 39 + FORMAT_SIZE;
+    cout << "\n\n  Terms only affect the conversions that take place after it\n  Passing '!' to on/off terms would toggle them\n  Supported colorspaces: " << list_colorspaces(", ") << endl;
+    cout << "\n" FORMAT_GREEN_BOLD(Example commands:) "\n";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! FF0000h) << "Convert #FF0000 to HSV";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsl! 1 0 0) << "Convert #FF0000 to HSL";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace cielab! hsl: 180 0.5 0.5) << "From HSL to CIELab";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace clamp: on rgb! hsl: 180 0 1.1) << "From HSL to RGB and clamp to RGB range";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace p. 9 CIELab! 0AFh) << "#00AAFF to Lab with 9 decimal places";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace p. 9 CIELab! FFFF0000FFFFh) << "Convert 16-bit colors";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! 80FF0000h) << "#80FF0000 in argb format to HSV";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace HSV! xxxa! FF000080H) << "#FF000080 in rgba format to HSV";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace cs.) << "Activate clamping and wait for input";
     cout << endl;
   }
   // }}}

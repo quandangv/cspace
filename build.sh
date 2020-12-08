@@ -77,6 +77,7 @@ main() {
 
   msg "Executing CMake command"
   cmake -DBUILD_TESTS=${BUILD_TESTS} \
+        -DPLATFORM=Linux \
         .. || msg_err "Failed to compile project..."
 
   msg "Building project"
