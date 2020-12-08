@@ -20,51 +20,6 @@ string to_string(const double* arr, int count) {
   return result.str();
 }
 
-// Template for converting colorspace to string and back
-// All colorspaces goes here
-template<bool from_str>
-void str_space(string& str, colorspace& space) {
-  #define CASE(a) \
-  if constexpr(from_str) { \
-    if (strcasecmp(str.c_str(), #a) == 0) { \
-      space = colorspaces::a; \
-      return; \
-    } \
-  } else { \
-    if (space == colorspaces::a) { \
-      str = #a; \
-      return; \
-    } \
-  }
-  CASE(xyz);
-  CASE(rgb);
-  CASE(cmyk);
-  CASE(jzazbz);
-  CASE(cielab);
-  CASE(hsl);
-  CASE(hsv);
-  CASE(jzczhz);
-  CASE(cielch);
-  #undef CASE
-  if constexpr(from_str)
-    throw parse_error("Unknown colorspace: "s + str);
-  throw parse_error("Unknown colorspace: "s + to_string(space));
-}
-
-// Converts string to colorspace
-colorspace stospace(string&& value) {
-  colorspace result;
-  str_space<true>(value, result);
-  return result;
-}
-
-// Converts colorspace to string
-string to_string(colorspace value) {
-  string result;
-  str_space<false>(result, value);
-  return move(result);
-}
-
 // Parse the color code and set the value to each component
 // Returns the maximum value; ie. 15 for 4-bit colors, 255 for 8-bit colors...
 // alpha_first informs whether the color code is in the [A]RGB or RGB[A] format

@@ -5,6 +5,44 @@
 
 using namespace std;
 
+// All colorspaces goes here
+#define APPLY_COLORSPACES \
+  CASE(xyz); \
+  CASE(rgb); \
+  CASE(cmyk); \
+  CASE(jzazbz); \
+  CASE(cielab); \
+  CASE(hsl); \
+  CASE(hsv); \
+  CASE(jzczhz); \
+  CASE(cielch);
+
+// Converts string to colorspace
+colorspace stospace(const string& value) {
+  #define CASE(c) if (strcasecmp(value.c_str(), #c) == 0) return colorspaces::c;
+  APPLY_COLORSPACES
+  #undef CASE
+  throw conversion_error("Unknown colorspace: "s + value);
+}
+
+// Converts colorspace to string
+string to_string(colorspace value) {
+  #define CASE(c) if (value == colorspaces::c) return #c;
+  APPLY_COLORSPACES
+  #undef CASE
+  throw conversion_error("Unknown colorspace: "s + to_string(value));
+}
+
+string list_colorspaces(const string& sep) {
+  string result;
+  bool first = true;
+  #define CASE(c) if (first) { result += #c; first = false; } else { result += sep + #c; }
+  APPLY_COLORSPACES
+  #undef CASE
+  return result;
+}
+#undef APPLY_COLORSPACES
+
 namespace colorspaces {
   constexpr const char scope[] = "indirect-convert";
 

@@ -44,7 +44,7 @@ void interface::feed_waiting_term(const string& term, string&& arg) {
   BOOL_WAIT_TERM(alpha)
   BOOL_WAIT_TERM(clamp)
   } else throw application_error("Interface: Unknown waiting term: " + term);
-#undef BOOL_WAIT_TERM
+  #undef BOOL_WAIT_TERM
 }
 
 // Called before discarding the data

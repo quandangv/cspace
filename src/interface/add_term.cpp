@@ -44,7 +44,7 @@ std::string interface::add_term(string&& term) {
       term.pop_back();
       switch(control_char) {
       case ':':
-        from = stospace(move(term));
+        from = stospace(term);
         break;
       case '!':
         // If any output color space is specified, disable hex output mode,

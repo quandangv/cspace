@@ -9,13 +9,13 @@ using std::endl;
 constexpr char scope[] = "interface";
 
 // Template for printint help and processing long/short switches
-template<bool help, bool _short>
+template<bool help, bool expanded>
 bool interface::switches(const string& term) {
   #define INDENT(size) << endl << std::setw(size) << std::left 
 
   // Start of the help message {{{
   constexpr int term_indent = 25;
-  if constexpr(help) {
+  if constexpr(help && !expanded) {
     logger::debug<scope>("Interface: help called");
     cout << "Converts colors from one color space to another.\nUsage: cspace [TERM] [TERM] ...\nTerms are floating-point numbers that will be the input for the conversions, but they can also be one of the following:\n";
     cout INDENT(term_indent) << "  {colorspace}:" << "Convert from {colorspace} (RGB by default)";
@@ -38,7 +38,7 @@ bool interface::switches(const string& term) {
           cout INDENT(term_indent) << "  "#a_full" "#tail << a_desc; \
         else \
           cout INDENT(term_indent) << "  "#a"., "#a_full" "#tail << a_desc; \
-      } else if constexpr(!_short) { \
+      } else if constexpr(expanded) { \
         if (term == #a_full) { \
           action(); \
           return true; \
@@ -60,6 +60,16 @@ bool interface::switches(const string& term) {
   CONTROL_TERM
   print_help();
   CONTROL_TERM_END(h, help!, , "Show this help message")
+
+  CONTROL_TERM
+  cout << list_colorspaces(" ") << endl;
+  CONTROL_TERM_END(, colorspaces?, , "List supported colorspaces")
+
+  CONTROL_TERM
+  auto tmp = from;
+  from = to;
+  to = tmp;
+  CONTROL_TERM_END(w, swap!, , "Swap 'from' and 'to' colorspaces")
 
   WAIT_TERM(a, alpha, {on/off/!}, "Read alpha along with other components")
   
@@ -89,10 +99,10 @@ bool interface::switches(const string& term) {
   // }}}
 
   // Ending of the help message {{{
-  if constexpr(help) {
+  if constexpr(help && !expanded) {
     constexpr int example_indent = 40;
     cout << "\n\nTerms affecting the output (such as clamp, precision) must appear before the input to take effect. Passing '!' to on/off terns would toggle them";
-    cout << "\nSupported colorspaces: RGB, HSV, HSL, XYZ, CIELab, CIELCh, Jzazbz, JzCzhz\n";
+    cout << "\nSupported colorspaces: " << list_colorspaces(", ") << endl;
     cout << "\nExample commands:";
     cout INDENT(example_indent) << "  cspace hsv! FF0000h" << "Convert #FF0000 to HSV";
     cout INDENT(example_indent) << "  cspace hsl! 1 0 0" << "Convert #FF0000 to HSL";
@@ -115,9 +125,9 @@ void interface::print_help() {
 }
 
 void interface::process_short_switches(const string& names) {
-  switches<false, true>(names);
+  switches<false, false>(names);
 }
 
 bool interface::process_long_switch(const string& name) {
-  return switches<false, false>(name);
+  return switches<false, true>(name);
 }

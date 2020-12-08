@@ -5,6 +5,11 @@
 DEFINE_ERROR(conversion_error)
 
 using colorspace = unsigned char;
+
+std::string to_string(colorspace);
+colorspace stospace(const std::string&);
+std::string list_colorspaces(const std::string& separator);
+
 namespace colorspaces {
   // All colorspaces are organized to a tree
   // The colorspace of value 0 is the root
