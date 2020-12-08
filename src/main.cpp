@@ -16,8 +16,8 @@ int main(int argc, char** argv) {
   auto read_word = [&]()->string {
     static int argi = 1;
     if (argi <= argc) {
+      // If all arguments have been returned and stay switch is off, make the program quit
       if (argi++ == argc) {
-        // If all arguments have been returned and stay flag is false, make the program quit
         if (!processor.stay) {
           processor.quit = true;
           return "";
@@ -34,11 +34,14 @@ int main(int argc, char** argv) {
         pos = 0;
       } else {
         constexpr const char space_chars[] = " \t";
+
+        // Find the start of the word
         auto start = input.find_first_not_of(space_chars, pos);
         if (start == string::npos) {
           input.clear();
           continue;
         }
+        // If the end of the word is the end of the cached string, clear the string
         pos = input.find_first_of(space_chars, start);
         if (pos == string::npos) {
           auto result = input.substr(start);

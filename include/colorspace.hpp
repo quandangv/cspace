@@ -6,13 +6,18 @@ DEFINE_ERROR(conversion_error)
 
 using colorspace = unsigned char;
 namespace colorspaces {
+  // All colorspaces are organized to a tree
+  // The colorspace of value 0 is the root
   constexpr colorspace xyz          = 0b00000000;
 
+  // The mask of the root marks the bits to denote direct children of the root
+  // The higher bits are for denoting descendant of each child
   constexpr colorspace xyz_msk      = 0b00000011;
   constexpr colorspace rgb          = 0b00000001;
   constexpr colorspace jzazbz       = 0b00000010;
   constexpr colorspace cielab       = 0b00000011;
 
+  // The mask of a node marks the bits to denote its direct children
   constexpr colorspace rgb_msk      = 0b00001111;
   constexpr colorspace hsl          = 0b00000101;
   constexpr colorspace hsv          = 0b00001001;
@@ -23,6 +28,7 @@ namespace colorspaces {
 
   constexpr colorspace cielab_msk   = 0b00000111;
   constexpr colorspace cielch       = 0b00000111;
+  // The lower bits are used first to make easier for later expansion
 
   void convert(double* value, colorspace from, colorspace to);
   int component_count(colorspace);

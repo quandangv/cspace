@@ -40,7 +40,7 @@ struct TestSet {
     }
     EXPECT_EQ(real_result, result_str);
 
-    auto state = item.get_terms();
+    auto state = item.get_state();
     auto final_terms = split_words(state);
 
     // check if the list of terms contains unexpected terms or not contain the expected

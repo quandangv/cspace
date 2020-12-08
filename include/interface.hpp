@@ -27,7 +27,7 @@ public:
   double alpha_val{1.0};
 
   std::string add_term(std::string&&);
-  std::string get_terms() const;
+  std::string get_state() const;
   void clear();
   void makesure_empty() const;
   
@@ -41,6 +41,6 @@ private:
   template<bool, bool> bool switches(const std::string&);
 
   void feed_waiting_term(const std::string& term, std::string&& data);
-  std::string pop_data(colorspace, colorspace);
+  std::string pop_data(double*, colorspace, colorspace);
 };
 

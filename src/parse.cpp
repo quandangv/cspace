@@ -7,6 +7,7 @@
 
 using namespace std;
 
+// Convert the right number components of the given colorspace to string
 string to_string(const double* arr, colorspace space) {
   return to_string(arr, colorspaces::component_count(space));
 }
@@ -19,9 +20,11 @@ string to_string(const double* arr, int count) {
   return result.str();
 }
 
+// Template for converting colorspace to string and back
+// All colorspaces goes here
 template<bool from_str>
 void str_space(string& str, colorspace& space) {
-#define CASE(a) \
+  #define CASE(a) \
   if constexpr(from_str) { \
     if (strcasecmp(str.c_str(), #a) == 0) { \
       space = colorspaces::a; \
@@ -42,30 +45,37 @@ void str_space(string& str, colorspace& space) {
   CASE(hsv);
   CASE(jzczhz);
   CASE(cielch);
-#undef CASE
+  #undef CASE
   if constexpr(from_str)
     throw parse_error("Unknown colorspace: "s + str);
   throw parse_error("Unknown colorspace: "s + to_string(space));
 }
 
+// Converts string to colorspace
 colorspace stospace(string&& value) {
   colorspace result;
   str_space<true>(value, result);
   return result;
 }
 
+// Converts colorspace to string
 string to_string(colorspace value) {
   string result;
   str_space<false>(result, value);
   return move(result);
 }
 
+// Parse the color code and set the value to each component
+// Returns the maximum value; ie. 15 for 4-bit colors, 255 for 8-bit colors...
+// alpha_first informs whether the color code is in the [A]RGB or RGB[A] format
 int parse_code(const string& value, component& a, component& r,
                component& g, component& b, bool alpha_first) {
   bool error = false;
   int divider;
   auto str = value.c_str();
-	auto hex = [&] (int index)->unsigned int {
+
+  // This parses the base-16 digit at the given index
+	auto hex = [&] (int index)->unsigned char {
 		auto& c = str[index];
     if (c <= '9' && c >= '0')
       return c - '0';
@@ -78,6 +88,7 @@ int parse_code(const string& value, component& a, component& r,
 	};
 
 	switch(value.length()) {
+  	// Use the length of the string to know the bit size of each component and whether there is an alpha component
   	case 4:
     	if (alpha_first) {
       	a = hex(0);
@@ -86,6 +97,8 @@ int parse_code(const string& value, component& a, component& r,
       	a = hex(3);
     	} else {
 		case 3:
+  		  // This will set alpha to maximum,
+  		  // but will be skipped if we fall throughfrom the previous case
   			a = 15;
     	}
   		r = hex(0);
@@ -143,12 +156,12 @@ bool parse(string str, int& result) {
 
 bool parse(string str, bool& result) {
   auto c_str = str.c_str();
-#define CMP(a) strcasecmp(c_str, #a) == 0
+  #define CMP(a) strcasecmp(c_str, #a) == 0
   if (CMP(on) || CMP(true))
     result = true;
   else if (CMP(off) || CMP(false))
     result = false;
   else return false;
   return true;
-#undef CMP
+  #undef CMP
 }
