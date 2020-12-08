@@ -15,11 +15,15 @@ public:
   int count{0};
   colorspace from{colorspaces::rgb};
   colorspace to{colorspaces::rgb};
-  bool clamp, quit, stay;
+  bool clamp{false};
+  bool quit{false};
+  bool stay{false};
   std::string separator{" "};
 
   // Support for hexedecimal color code and alpha component
-  bool hex{false}, alpha_first{true}, alpha{false};
+  bool hex{false};
+  bool alpha_first{true};
+  bool alpha{false};
   double alpha_val{1.0};
 
   std::string add_term(std::string&&);

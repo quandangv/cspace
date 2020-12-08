@@ -21,6 +21,8 @@ usage() {
       ${COLORS[CYAN]}${SELF}${COLORS[OFF]} [options]
 
   ${COLORS[GREEN]}${COLORS[BOLD]}Options:${COLORS[OFF]}
+      ${COLORS[GREEN]}-A, --auto${COLORS[OFF]}
+          Use defaults for every options
       ${COLORS[GREEN]}-i, --install${COLORS[OFF]}
           Execute 'sudo make install' and install cspace
       ${COLORS[GREEN]}-t, --tests${COLORS[OFF]}
@@ -76,7 +78,6 @@ main() {
   msg "Executing CMake command"
   cmake -DBUILD_TESTS=${BUILD_TESTS} \
         .. || msg_err "Failed to compile project..."
-  cmake --build .
 
   msg "Building project"
   make || msg_err "Failed to build project"
@@ -98,6 +99,11 @@ main() {
 #################
 while [[ "$1" == -* ]]; do
   case "$1" in
+    -A|--auto)
+      [[ -z "$INSTALL" ]] && INSTALL=OFF;
+      [[ -z "$BUILD_TESTS" ]] && BUILD_TESTS=OFF;
+      shift
+      ;;
     -i|--install)
       INSTALL=ON; shift ;;
     -t|--test)
