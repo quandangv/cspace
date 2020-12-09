@@ -103,7 +103,7 @@ bool interface::switches(const string& term) {
   // Ending of the help message {{{
   if constexpr(help && !expanded) {
     constexpr int example_indent = 39 + FORMAT_SIZE;
-    cout << "\n\n  Terms only affect the conversions that take place after it\n  Passing '!' to on/off terms would toggle them\n  Supported colorspaces: " << list_colorspaces(", ") << endl;
+    cout << "\n\n  Terms only affect the conversions that take place after it\n  Passing '!' to on/off terms would toggle them\n  Supported colorspaces are:\n    " << list_colorspaces(", ") << endl;
     cout << "\n" FORMAT_GREEN_BOLD(Example commands:) "\n";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! FF0000h) << "Convert #FF0000 to HSV";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsl! 1 0 0) << "Convert #FF0000 to HSL";

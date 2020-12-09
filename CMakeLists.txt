@@ -5,7 +5,7 @@ project(cspace VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-if(PLATFORM EQUAL "Linux")
+if(PLATFORM_LINUX)
   add_compile_definitions(PLATFORM_LINUX)
 endif()
 

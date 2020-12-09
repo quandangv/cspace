@@ -6,8 +6,8 @@ proj_name=cspace
 }
 
 path=./build/$proj_name-$1
-git archive --prefix cspace/ --output $path.tar --format tar HEAD &&
-git archive --prefix cspace/ --output $path.tar.gz --format tar.gz HEAD && {
+git archive --prefix $proj_name/ --output $path.tar --format tar HEAD &&
+git archive --prefix $proj_name/ --output $path.tar.gz --format tar.gz HEAD &&{
   echo "Archive generated to $path"
   exit 0
 }
