@@ -43,6 +43,33 @@ msg() {
   echo -e "${COLORS[GREEN]}${COLORS[BOLD]}** ${COLORS[OFF]}$*\n"
 }
 
+parse() {
+  while [[ "$1" == -* ]]; do
+    case "$1" in
+      -A|--auto)
+        [[ -z "$INSTALL" ]] && INSTALL=OFF;
+        [[ -z "$BUILD_TESTS" ]] && BUILD_TESTS=OFF;
+        shift
+        ;;
+      -i|--install)
+        INSTALL=ON; shift ;;
+      -t|--test)
+        BUILD_TESTS=ON; shift ;;
+      -p|--purge)
+        PURGE_BUILD_DIR=ON; shift ;;
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      --) shift; break ;;
+      *)
+        usage
+        [[ "$1" =~ ^-[0-9a-zA-Z]{2,}$ ]] && msg_err "Don't combine options: ie do [-c -i] instead of [-ci]" || msg_err "Unknown option [$1]"
+        ;;
+    esac
+  done
+}
+
 ask() {
   if [[ -z "$BUILD_TESTS" ]]; then
     read -r -p "$(msg "Build and run unit tests? [y/N]: ")" -n 1 p && echo
@@ -78,8 +105,6 @@ main() {
   mkdir -p ./build || msg_err "Failed to create build dir"
   cd ./build || msg_err "Failed to enter build dir"
 
-  ask
-
   msg "Executing CMake command"
   cmake -DBUILD_TESTS=${BUILD_TESTS} \
         -DPLATFORM=Linux \
@@ -103,30 +128,7 @@ main() {
 #################
 ###### Entry
 #################
-while [[ "$1" == -* ]]; do
-  case "$1" in
-    -A|--auto)
-      [[ -z "$INSTALL" ]] && INSTALL=OFF;
-      [[ -z "$BUILD_TESTS" ]] && BUILD_TESTS=OFF;
-      shift
-      ;;
-    -i|--install)
-      INSTALL=ON; shift ;;
-    -t|--test)
-      BUILD_TESTS=ON; shift ;;
-    -p|--purge)
-      PURGE_BUILD_DIR=ON; shift ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    --) shift; break ;;
-    *)
-      usage
-      [[ "$1" =~ ^-[0-9a-zA-Z]{2,}$ ]] && msg_err "Don't combine options: ie do [-c -i] instead of [-ci]" || msg_err "Unknown option [$1]"
-      ;;
-  esac
-done
-
+parse $1
+ask
 main
 

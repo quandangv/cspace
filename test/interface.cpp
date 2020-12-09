@@ -1,10 +1,9 @@
 #include "interface.hpp"
+#include "test.h"
 
 #include <tuple>
 #include <vector>
 #include <sstream>
-
-#include "test.hpp"
 
 using namespace std;
 struct TestSet {
