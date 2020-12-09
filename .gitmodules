@@ -1,0 +1,5 @@
+[submodule "contrib"]
+	path = contrib
+	url = ssh://aur@aur.archlinux.org/cspace.git
+[push]
+	recurseSubmodules = check

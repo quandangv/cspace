@@ -61,6 +61,11 @@ install() {
 }
 
 main() {
+  [[ -d ./.git ]] && { 
+    msg "Fetching submodules" 
+    git submodule update --init --recursive || msg_err "Failed to clone submodules"
+  } 
+
   [[ -d ./build ]] && {
     if [[ "$PURGE_BUILD_DIR" == ON ]]; then
       msg "Removing existing build dir (-f)"
