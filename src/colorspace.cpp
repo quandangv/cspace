@@ -22,7 +22,7 @@ colorspace stospace(const string& value) {
   #define CASE(c) if (strcasecmp(value.c_str(), #c) == 0) return colorspaces::c;
   APPLY_COLORSPACES
   #undef CASE
-  throw conversion_error("Unknown colorspace: "s + value);
+  throw colorspace_error("Unknown colorspace: "s + value);
 }
 
 // Converts colorspace to string
@@ -30,7 +30,7 @@ string to_string(colorspace value) {
   #define CASE(c) if (value == colorspaces::c) return #c;
   APPLY_COLORSPACES
   #undef CASE
-  throw conversion_error("Unknown colorspace: "s + to_string(value));
+  throw colorspace_error("Unknown colorspace: "s + to_string(value));
 }
 
 string list_colorspaces(const string& sep) {
@@ -60,7 +60,7 @@ namespace colorspaces {
     ENTRY(jzazbz)
     ENTRY(cielab)
     #undef ENTRY
-    throw conversion_error("Color-Mask: Unknown color space: " + to_string(c));
+    throw colorspace_error("Color-Mask: Unknown color space: " + to_string(c));
   }
 
   // All the direct conversions goes here
@@ -83,7 +83,7 @@ namespace colorspaces {
       CASE(xyz, cielab)
       AB_CH(jzazbz, jzczhz)
       AB_CH(cielab, cielch)
-      default: throw conversion_error("Color-Direct: Unknown color conversion: from " + to_string(from) + " to " + to_string(to)); 
+      default: throw colorspace_error("Color-Direct: Unknown color conversion: from " + to_string(from) + " to " + to_string(to)); 
     #undef AB_CH
     #undef CASE
     #undef CASE_BASE
@@ -147,6 +147,68 @@ namespace colorspaces {
       clamp(value[0], 0, 1);
       break;
     }
+  }
+
+  int parse_component(const char* name, colorspace space) {
+    #define CASE(word, val) if(strcasecmp(name, #word) == 0) return val;
+    if (space == rgb) {
+      CASE(red, 0)
+      CASE(green, 1)
+      CASE(blue, 2)
+    }
+    if (space == cmyk) {
+      CASE(cyan, 0)
+      CASE(magenta, 1)
+      CASE(yellow, 2)
+      CASE(key, 3)
+      CASE(black, 3)
+    }
+    if (space == xyz) {
+      CASE(x, 0)
+      CASE(y, 1)
+      CASE(z, 2)
+    }
+    if (space == cielab || space == jzazbz || space == cielch || space == jzczhz) {
+      CASE(brightness, 0)
+      CASE(lightness, 0)
+      CASE(lum, 0)
+      CASE(luminosity, 0)
+    }
+    if (space == cielab || space == jzazbz) {
+      CASE(a, 1)
+      CASE(b, 2)
+    }
+    if (space == cielch || space == jzczhz) {
+      CASE(c, 1)
+      CASE(chroma, 1)
+      CASE(h, 2)
+      CASE(hue, 2)
+    }
+    if (space == cielab || space == cielch) {
+      CASE(l, 0)
+    }
+    if (space == jzazbz || space == jzczhz) {
+      CASE(j, 0)
+    }
+    if (space == hsl || space == hsv) {
+      CASE(h, 0)
+      CASE(hue, 0)
+      CASE(s, 0)
+      CASE(sat, 0)
+      CASE(saturation, 0)
+    }
+    if (space == hsl) {
+      CASE(lightness, 2)
+      CASE(lum, 2)
+      CASE(luminosity, 2)
+      CASE(l, 2)
+    }
+    if (space == hsv) {
+      CASE(value, 2)
+      CASE(v, 2)
+    }
+    throw colorspace_error(to_string(space) + " colorspace: Unknown component: " + name);
+    #undef CASE
   }
 }
 

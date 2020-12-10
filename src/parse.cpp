@@ -99,19 +99,18 @@ int parse_code(const string& value, component& a, component& r,
   return divider;
 }
 
-bool parse(string str, double& result) {
+bool parse(const char* str, double& result) {
   int len;
-  return sscanf(str.c_str(), "%lf%n", &result, &len) == 1 && len == str.size();
+  return sscanf(str, "%lf%n", &result, &len) == 1 && str[len] == 0;
 }
 
-bool parse(string str, int& result) {
+bool parse(const char* str, int& result) {
   int len;
-  return sscanf(str.c_str(), "%d%n", &result, &len) == 1 && len == str.size();
+  return sscanf(str, "%d%n", &result, &len) == 1 && str[len] == 0;
 }
 
-bool parse(string str, bool& result) {
-  auto c_str = str.c_str();
-  #define CMP(a) strcasecmp(c_str, #a) == 0
+bool parse(const char* str, bool& result) {
+  #define CMP(a) strcasecmp(str, #a) == 0
   if (CMP(on) || CMP(true))
     result = true;
   else if (CMP(off) || CMP(false))

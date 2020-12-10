@@ -55,9 +55,12 @@ bool interface::switches(const string& term) {
   #define FLAG_TERM(a, a_full, tail, a_desc) CONTROL_TERM a_full = true; CONTROL_TERM_END(a, a_full!, tail, a_desc)
 
   // Control terms that add to waiting_terms
-  #define WAIT_TERM(a, a_full, tail, a_desc) CONTROL_TERM waiting_terms.emplace_back(#a_full); CONTROL_TERM_END(a, a_full:, tail, a_desc)
+  #define WAIT_TERM(a, a_full, tail, a_desc) CONTROL_TERM add_term_eater(#a_full); CONTROL_TERM_END(a, a_full:, tail, a_desc)
 
   WAIT_TERM(c, clamp, {on/off/!}, "Clamp each output to the range of its colorspace")
+
+  WAIT_TERM(, mod, {comp} {op}{val}, "Apply modifications to the color before converting")
+  WAIT_TERM(i, inter, {cspace}, "Colorspace in which to apply modifications")
 
   CONTROL_TERM
   print_help();

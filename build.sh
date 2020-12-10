@@ -23,7 +23,7 @@ usage() {
   ${COLORS[GREEN]}${COLORS[BOLD]}Options:${COLORS[OFF]}
       ${COLORS[GREEN]}-A, --auto${COLORS[OFF]}
           Use defaults for every options
-      ${COLORS[GREEN]}-i, --install${COLORS[OFF]}
+      ${COLORS[GREEN]}-I, --noinstall${COLORS[OFF]}
           Execute 'sudo make install' and install cspace
       ${COLORS[GREEN]}-t, --tests${COLORS[OFF]}
           Build unit tests into './build/test'
@@ -47,12 +47,12 @@ parse() {
   while [[ "$1" == -* ]]; do
     case "$1" in
       -A|--auto)
-        [[ -z "$INSTALL" ]] && INSTALL=OFF;
+        [[ -z "$INSTALL" ]] && INSTALL=ON;
         [[ -z "$BUILD_TESTS" ]] && BUILD_TESTS=OFF;
         shift
         ;;
-      -i|--install)
-        INSTALL=ON; shift ;;
+      -I|--noinstall)
+        INSTALL=OFF; shift ;;
       -t|--test)
         BUILD_TESTS=ON; shift ;;
       -p|--purge)

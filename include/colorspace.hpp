@@ -2,7 +2,7 @@
 
 #include "error.hpp"
 
-DEFINE_ERROR(conversion_error)
+DEFINE_ERROR(colorspace_error)
 
 using colorspace = unsigned char;
 
@@ -38,6 +38,7 @@ namespace colorspaces {
   void convert(double* value, colorspace from, colorspace to);
   int component_count(colorspace);
   void clamp(double* value, colorspace);
+  int parse_component(const char* name, colorspace);
 }
 
 

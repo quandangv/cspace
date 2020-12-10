@@ -9,8 +9,32 @@ using std::endl;
 
 constexpr char scope[] = "interface";
 
+void mod::apply(double* data) const {
+  auto& target = data[component];
+  switch(op) {
+  case '+': target += value; break;
+  case '-': target -= value; break;
+  case '*': target *= value; break;
+  case '/': target /= value; break;
+  case '=': target = value; break;
+  default: throw interface_error("Unknown operator: " + string{op});
+  }
+}
+
+double& color_data::operator[](int index) {
+  return data[index];
+}
+
+void color_data::extract_alpha(bool alpha_first) {
+  if (alpha_first) {
+    alpha = data[0];
+    data_ptr++;
+  } else
+    alpha = data[count-1];
+}
+
 // Returns the state of the interface
-string interface::get_state() const {
+string interface::get_state() {
   std::stringstream output;
   output << to_string(from) << ": "
          << to_string(to) << "!";
@@ -27,30 +51,67 @@ void interface::clear() {
 }
 
 // Process an argument as a waiting term
-void interface::feed_waiting_term(const string& term, string&& arg) {
-  if (term == "precision") {
-    if (int val; parse(arg, val))
+void interface::feed_term_eater(string&& arg) {
+  auto c_str = arg.c_str();
+  if (term_eater == "precision") {
+    term_eater.clear();
+    if (int val; parse(c_str, val)) {
       output_stream << std::setprecision(val);
-    else throw interface_error("Interface-precision: Unknown term argument: "+arg);
+    } else 
+      throw interface_error("Interface-precision: Unknown term argument: "+arg);
+  } else if (term_eater == "inter") {
+    term_eater.clear();
+    inter = stospace(arg);
+  } else if (term_eater == "mod") {
+    if (strcasecmp(c_str, "none") == 0) {
+      modifications.clear();
+    } else if (modifications.empty() || modifications.back().op != 0) {
+      modifications.emplace_back();
+      modifications.back().component = colorspaces::parse_component(c_str, inter);
+      return;
+    } else {
+      if (double val; parse(c_str + 1, val)) {
+        modifications.back().op = arg[0];
+        modifications.back().value = val;
+        if (comma) {
+          comma = false;
+          return;
+        }
+      } else
+        throw interface_error("Precision: Unknown term argument: "+arg);
+    }
+    term_eater.clear();
     
   // Wait terms that expects a boolean argument
   #define BOOL_WAIT_TERM(name) \
-  } else if (term == #name) { \
-    if (bool val; parse(arg, val)) { \
+  } else if (term_eater == #name) { \
+    term_eater.clear(); \
+    if (bool val; parse(c_str, val)) { \
       name = val; \
     } else if (arg == "!") \
       name = !name; \
-    else throw interface_error("Interface-"#name": Unknown term argument: "+arg);
+    else \
+      throw interface_error("Interface-"#name": Unknown term argument: "+arg);
   BOOL_WAIT_TERM(alpha)
   BOOL_WAIT_TERM(clamp)
-  } else throw application_error("Interface: Unknown waiting term: " + term);
   #undef BOOL_WAIT_TERM
+  } else throw application_error("Interface: Unknown term eater: " + term_eater);
 }
 
 // Called before discarding the data
 // Display a warning message if there is unprocessed data
-void interface::makesure_empty() const {
+void interface::makesure_empty() {
   if (count) {
     logger::warn("Interface: There is unprocessed data: " + to_string(&data[0], count) + ". They will be discarded");
   }
+}
+
+void interface::add_term_eater(string&& name) {
+  if (!term_eater.empty()) {
+    logger::warn("Term dropped without taking its required argument: " + term_eater);
+  }
+  term_eater = forward<string>(name);
+}
+
+void interface::feed_color_eater() {
 }
