@@ -31,8 +31,6 @@ public:
   bool stay{false};
   bool hex{false};
   bool comma{false};
-
-  // Support for alpha component
   bool alpha_first{true};
   bool alpha{false};
 
@@ -56,6 +54,7 @@ private:
   void add_color_eater(std::string&&);
   void feed_term_eater(std::string&& data);
   void feed_color_eater();
-  std::string pop_data(colorspace, colorspace, bool);
+  void unexpected_comma(const std::string& term);
+  std::string pop_data(colorspace, colorspace);
 };
 

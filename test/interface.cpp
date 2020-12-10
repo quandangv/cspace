@@ -35,7 +35,7 @@ struct TestSet {
     for(int i = 0; i < terms.size(); i++) {
       auto r = item.add_term(string(terms[i]));
       if (!r.empty())
-        real_result += r + "\n";
+        real_result += r + " ";
     }
     EXPECT_EQ(real_result, result_str);
 
@@ -60,20 +60,20 @@ class GetTest : public ::testing::Test, public ::testing::WithParamInterface<Tes
 
 vector<TestSet> interface_tests = {
   {{"xyz! hsv: cielab! rgb:"}, {""}, {"cielab! rgb:"}, {"xyz! hsv:"}},
-  {{"0.1 0.2 0.3"}, {"0.1-0.2-0.3\n"}, {}, {"0.1 0.2 0.3"}},
-  {{"HSV! rgb: 1 0 0 0 1 1 0.69"}, {"0-1-1\n180-1-1\n"}, {"rgb: hsv! 0.69"}, {"1 0"}},
-  {{"c. on 1 2 3 hsv! 1 1 2"}, {"1-1-1\n240-0.5-1\n"}, {}, {"2 3"}},
-  {{"hsv! 0 1 1 swap! 120 1 1"}, {"180-1-1\n0-1-0\n"}, {}, {}},
-  {{"cmyk! 0.5 0.25 1"}, {"0.5-0.75-0-0\n"}, {}, {}},
-  {{"cmyk! alpha: on 0.2 0.5 0.25 1"}, {"0.2-0.5-0.75-0-0\n"}, {}, {}},
-  {{"hex! hsv: 150 0.75 0.75"}, {"30BF78\n"}, {"rgb!"}, {"rgb:"}},
-  {{"hsv! xyz: 00ffffh"}, {"180-1-1\n"}, {"xyz: hsv!"}, {}},
-  {{"axxx! hsv! xyz: 8000FFFFh"}, {"0.501961-180-1-1\n"}, {"xyz: hsv!"}, {}},
-  {{"xxxa! hsv! xyz: 00FFFF80h"}, {"180-1-1-0.501961\n"}, {"xyz: hsv!"}, {}},
-  {{"xxxa! hex! alpha: on hsv: 180 1 1 0.5  60 0.5 0.5 0.2 alpha: off 0 1 1 0.69"}, {"00FFFF80\n80804033\nFF0000\n"}, {"hsv: rgb! 0.69"}, {}},
-  {{"inter: hsv hex! mod: value *2, h +60  002040h"}, {"400080\n"}, {}, {}},
-  {{"inter: hsv hex! mod: value =0.75  002040h"}, {"0060BF\n"}, {}, {}},
-  {{"p. 3 0.987654 0.123456 0.654987  0.1 1 0.123456"}, {"0.988-0.123-0.655\n0.1-1-0.123\n"}, {}, {}},
+  {{"0.1 0.2 0.3, 0.4 0.5 0.6 0.7"}, {"0.1-0.2-0.3-0.4 0.5-0.6-0.7 "}, {}, {"0.1 0.2 0.3"}},
+  {{"HSV! rgb: 1 0 0 0 1 1 0.69"}, {"0-1-1 180-1-1 "}, {"rgb: hsv! 0.69"}, {"1 0"}},
+  {{"c. on 1 2 3 hsv! 1 1 2"}, {"1-1-1 240-0.5-1 "}, {}, {"2 3"}},
+  {{"hsv! 0 1 1 swap! 120 1 1"}, {"180-1-1 0-1-0 "}, {}, {}},
+  {{"cmyk! 0.5 0.25 1"}, {"0.5-0.75-0-0 "}, {}, {}},
+  {{"cmyk! 0.2, 0.5, 0.25, 1"}, {"0.2-0.5-0.75-0-0 "}, {}, {}},
+  {{"hex! hsv: 150 0.75 0.75"}, {"30BF78 "}, {"rgb!"}, {"rgb:"}},
+  {{"hsv! xyz: 00ffffh"}, {"180-1-1 "}, {"xyz: hsv!"}, {}},
+  {{"axxx! hsv! xyz: 8000FFFFh"}, {"0.501961-180-1-1 "}, {"xyz: hsv!"}, {}},
+  {{"xxxa! hsv! xyz: 00FFFF80h"}, {"180-1-1-0.501961 "}, {"xyz: hsv!"}, {}},
+  {{"xxxa! hex! hsv: 180 1 1, 0.5  60 0.5 0.5, 0.2 0 1 1 0.69"}, {"00FFFF80 80804033 FF0000 "}, {"hsv: rgb! 0.69"}, {}},
+  {{"inter: hsv hex! mod: value *2, h +60  002040h"}, {"400080 "}, {}, {}},
+  {{"inter: hsv hex! mod: value =0.75  002040h"}, {"0060BF "}, {}, {}},
+  {{"p. 3 0.987654 0.123456 0.654987  0.1 1 0.123456"}, {"0.988-0.123-0.655 0.1-1-0.123 "}, {}, {}},
 };
 INSTANTIATE_TEST_SUITE_P(Interface, GetTest, ::testing::ValuesIn(interface_tests));
 

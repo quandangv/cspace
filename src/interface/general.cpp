@@ -35,6 +35,7 @@ void interface::clear() {
   from = colorspaces::rgb;
   to = colorspaces::rgb;
   data_count = 0;
+  alpha = false;
 }
 
 // Process an argument as a waiting term
@@ -79,7 +80,6 @@ void interface::feed_term_eater(string&& arg) {
       name = !name; \
     else \
       throw interface_error("Interface-"#name": Unknown term argument: "+arg);
-  BOOL_WAIT_TERM(alpha)
   BOOL_WAIT_TERM(clamp)
   #undef BOOL_WAIT_TERM
   } else throw application_error("Interface: Unknown term eater: " + term_eater);
@@ -90,6 +90,13 @@ void interface::feed_term_eater(string&& arg) {
 void interface::makesure_empty() {
   if (data_count) {
     logger::warn("Interface: There is unprocessed data: " + to_string(&data[0], data_count) + ". They will be discarded");
+  }
+}
+
+void interface::unexpected_comma(const string& term) {
+  if (comma) {
+    logger::warn("Parsing term: Unexpected comma at: " + term);
+    comma = false;
   }
 }
 

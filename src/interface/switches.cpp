@@ -76,8 +76,6 @@ bool interface::switches(const string& term) {
   to = tmp;
   CONTROL_TERM_END(w, swap!, , "Swap 'from' and 'to' colorspaces")
 
-  WAIT_TERM(a, alpha, {on/off/!}, "Read alpha along with other components")
-  
   CONTROL_TERM
   alpha_first = true;
   CONTROL_TERM_END(, axxx!, , "Read and write alpha component before other components")

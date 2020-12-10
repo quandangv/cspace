@@ -12,10 +12,7 @@ constexpr char scope[] = "interface";
 // If the term triggers a conversion, return the resulting string
 std::string interface::add_term(string&& term) {
   logger::debug<scope>("Interface-Term: '" + term + "'");
-  if (comma) {
-    logger::error("BUG: Coma left unconsumed, please report this");
-    comma = false;
-  }
+  unexpected_comma(term);
   if (term.empty()) return "";
   if (term.back() == ',') {
     term.pop_back();
@@ -30,28 +27,29 @@ std::string interface::add_term(string&& term) {
 
     // Feed term eater
     feed_term_eater(move(term));
-    if (comma) {
-      logger::warn("Parsing term: Unexpected comma at: " + term);
-      comma = false;
-    }
+    unexpected_comma(term);
   } else if (parse(term.c_str(), data[data_count])) {
 
     // Use term as numerical data
-    if (++data_count == colorspaces::component_count(from) + (int)alpha) {
-      // Got enough components, start the conversion
-      return pop_data(from, to, alpha);
+    if (++data_count >= colorspaces::component_count(from)) {
+      if (comma) {
+        comma = false;
+        if (alpha)
+          throw new interface_error("Add-term: Excess component: " + term);
+        else
+          alpha = true;
+      } else
+        // Got enough components, start the conversion
+        return pop_data(from, to);
     } else
       comma = false;
   } else {
+    unexpected_comma(term);
     
     // The term isn't data, check if it is a valid control term
     if (term == "--help") {
       print_help();
     } else {
-      if (comma) {
-        logger::warn("Parsing term: Unexpected comma at: " + term);
-        comma = false;
-      }
       if (!process_long_switch(term)) {
         auto control_char = term.back();
         term.pop_back();
@@ -76,13 +74,12 @@ std::string interface::add_term(string&& term) {
           {
             // Replace data with components from the color code and start conversion
             component comp[4];
-            bool has_alpha;
-            auto divider = parse_code(term, &comp[0], has_alpha);
+            auto divider = parse_code(term, &comp[0], alpha);
             if (divider != 0) {
               makesure_empty();
               for(int i = 0; i < 4; i++)
                 data[i] = static_cast<double>(comp[i]) / divider;
-              return pop_data(colorspaces::rgb, to, has_alpha);
+              return pop_data(colorspaces::rgb, to);
             }
           }
           // fall through
