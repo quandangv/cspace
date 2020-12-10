@@ -57,11 +57,11 @@ TEST_P(GetTest, direct) {
 #define TEST_ROUTE(a, b) TEST_METHOD(a, b) TEST_METHOD(b, a)
   color test;
   auto test_set = GetParam();
-	TEST_ROUTE(rgb, xyz)
-	TEST_ROUTE(rgb, hsl)
-	TEST_ROUTE(rgb, hsv)
-	TEST_ROUTE(rgb, cmyk)
-	TEST_ROUTE(cielab, xyz)
+  TEST_ROUTE(rgb, xyz)
+  TEST_ROUTE(rgb, hsl)
+  TEST_ROUTE(rgb, hsv)
+  TEST_ROUTE(rgb, cmyk)
+  TEST_ROUTE(cielab, xyz)
 #undef TEST_ROUTE
 #undef TEST_METHOD
 }
