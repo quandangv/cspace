@@ -35,7 +35,7 @@ std::string interface::add_term(string&& term) {
       if (comma) {
         comma = false;
         if (alpha)
-          throw new interface_error("Add-term: Excess component: " + term);
+          throw new interface_error("Add-term: Enough components have been received, excess comma at: " + term);
         else
           alpha = true;
       } else
@@ -60,8 +60,7 @@ std::string interface::add_term(string&& term) {
         case '!':
           // If any output color space is specified, disable hex output mode,
           // which was only meant to output in RGB color space
-          if (hex) {
-            hex = false;
+          if (output_stream.flags() & std::ios::hex) {
             output_stream << std::dec << std::setfill(' ');
           }
           to = stospace(move(term));

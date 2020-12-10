@@ -57,8 +57,6 @@ bool interface::switches(const string& term) {
   // Control terms that add to waiting_terms
   #define WAIT_TERM(a, a_full, tail, a_desc) CONTROL_TERM add_term_eater(#a_full); CONTROL_TERM_END(a, a_full:, tail, a_desc)
 
-  WAIT_TERM(c, clamp, {on/off/!}, "Clamp each output to the range of its colorspace")
-
   WAIT_TERM(, mod, {comp} {op}{val}, "Apply modifications to the color before converting")
   WAIT_TERM(i, inter, {cspace}, "Colorspace in which to apply modifications")
 
@@ -85,7 +83,6 @@ bool interface::switches(const string& term) {
   CONTROL_TERM_END(, xxxa!, , "Read and write alpha component after other components")
   
   CONTROL_TERM
-  hex = true;
   output_stream << std::uppercase << std::setfill('0') << std::hex;
   to = colorspaces::rgb;
   CONTROL_TERM_END(, hex!, , "Print output colors in hexedecimal code")
@@ -109,12 +106,11 @@ bool interface::switches(const string& term) {
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! FF0000h) << "Convert #FF0000 to HSV";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsl! 1 0 0) << "Convert #FF0000 to HSL";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace cielab! hsl: 180 0.5 0.5) << "From HSL to CIELab";
-    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace clamp: on rgb! hsl: 180 0 1.1) << "From HSL to RGB and clamp to RGB range";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace p. 9 CIELab! 0AFh) << "#00AAFF to Lab with 9 decimal places";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace p. 9 CIELab! FFFF0000FFFFh) << "Convert 16-bit colors";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! 80FF0000h) << "#80FF0000 in argb format to HSV";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace HSV! xxxa! FF000080H) << "#FF000080 in rgba format to HSV";
-    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace cs.) << "Activate clamping and wait for input";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace ps. 9) << "Set percision to 9 and wait for input";
     cout << endl;
   }
   // }}}

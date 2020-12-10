@@ -24,11 +24,11 @@ string interface::pop_data(colorspace from, colorspace to) {
       colorspaces::convert(data_ptr, inter, to);
     } else
       colorspaces::convert(data_ptr, from, to);
-    if (clamp || hex) colorspaces::clamp(data_ptr, to);
+    colorspaces::clamp(data_ptr, to);
     
     // print data to output stream
     auto comp_count = colorspaces::component_count(to) + (int)alpha;
-    if (hex) {
+    if (output_stream.flags() & std::ios::hex) {
       for(int i = 0; i < comp_count; i++)
         output_stream << std::setw(2) << (int)round(data[i]*255);
     } else {

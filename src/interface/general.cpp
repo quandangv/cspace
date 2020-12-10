@@ -80,7 +80,6 @@ void interface::feed_term_eater(string&& arg) {
       name = !name; \
     else \
       throw interface_error("Interface-"#name": Unknown term argument: "+arg);
-  BOOL_WAIT_TERM(clamp)
   #undef BOOL_WAIT_TERM
   } else throw application_error("Interface: Unknown term eater: " + term_eater);
 }
@@ -101,9 +100,8 @@ void interface::unexpected_comma(const string& term) {
 }
 
 void interface::add_term_eater(string&& name) {
-  if (!term_eater.empty()) {
+  if (!term_eater.empty())
     logger::warn("Term dropped without taking its required argument: " + term_eater);
-  }
   term_eater = forward<string>(name);
 }
 

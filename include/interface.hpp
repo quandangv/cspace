@@ -26,10 +26,8 @@ public:
   colorspace inter{colorspaces::jzazbz};
   std::string separator{" "};
   std::vector<mod> modifications;
-  bool clamp{false};
   bool quit{false};
   bool stay{false};
-  bool hex{false};
   bool comma{false};
   bool alpha_first{true};
   bool alpha{false};
