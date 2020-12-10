@@ -13,6 +13,7 @@ string to_string(const double* arr, colorspace space) {
 }
 
 string to_string(const double* arr, int count) {
+  if (count == 0) return "";
   stringstream result;
   result  << arr[0];
   for(int i = 1; i < count; i++)
@@ -23,8 +24,7 @@ string to_string(const double* arr, int count) {
 // Parse the color code and set the value to each component
 // Returns the maximum value; ie. 15 for 4-bit colors, 255 for 8-bit colors...
 // alpha_first informs whether the color code is in the [A]RGB or RGB[A] format
-int parse_code(const string& value, component& a, component& r,
-               component& g, component& b, bool alpha_first) {
+int parse_code(const string& value, component* comps, bool& has_alpha) {
   bool error = false;
   int divider;
   auto str = value.c_str();
@@ -44,51 +44,37 @@ int parse_code(const string& value, component& a, component& r,
 
 	switch(value.length()) {
   	// Use the length of the string to know the bit size of each component and whether there is an alpha component
-  	case 4:
-    	if (alpha_first) {
-      	a = hex(0);
-      	str++;
-    	} else if (true) {
-      	a = hex(3);
-    	} else {
-		case 3:
-  		  // This will set alpha to maximum,
-  		  // but will be skipped if we fall throughfrom the previous case
-  			a = 15;
-    	}
-  		r = hex(0);
-  		g = hex(1);
-  		b = hex(2);
+    case 4:
+      comps[3] = hex(3);
+      has_alpha = true;
+      if(false)
+    case 3:
+        has_alpha = false;
+  		comps[0] = hex(0);
+  		comps[1] = hex(1);
+  		comps[2] = hex(2);
   		divider = 15;
 			break;
 		case 8:
-  		if (alpha_first) {
-  			a = (hex(0) * 16 + hex(1));
-  			str += 2;
-  		} else if (true) {
-  			a = (hex(6) * 16 + hex(7));
-  		} else {
+			comps[3] = (hex(6) * 16 + hex(7));
+			has_alpha = true;
+  		if(false)
 		case 6:
-    		a = 255;
-			}
-			r = hex(0) * 16 + hex(1);
-			g = hex(2) * 16 + hex(3);
-			b = hex(4) * 16 + hex(5);
+    		has_alpha = false;
+			comps[0] = hex(0) * 16 + hex(1);
+			comps[1] = hex(2) * 16 + hex(3);
+			comps[2] = hex(4) * 16 + hex(5);
 			divider = 255;
 			break;
 		case 16:
-  		if (alpha_first) {
-  			a = hex(0)*4096 + hex(1)*256 + hex(2)*16 + hex(3);
-  			str += 4;
-  		} else if (true) {
-  			a = hex(12)*4096 + hex(13)*256 + hex(14)*16 + hex(15);
-  		} else {
+			comps[3] = hex(12)*4096 + hex(13)*256 + hex(14)*16 + hex(15);
+			has_alpha = true;
+  		if(false)
 		case 12:
-  			a = 65535;
-			}
-			r = hex(0)*4096 + hex(1)*256 + hex(2)*16 + hex(3);
-			g = hex(4)*4096 + hex(5)*256 + hex(6)*16 + hex(7);
-			b = hex(8)*4096 + hex(9)*256 + hex(10)*16 + hex(11);
+  			has_alpha = false;
+			comps[0] = hex(0)*4096 + hex(1)*256 + hex(2)*16 + hex(3);
+			comps[1] = hex(4)*4096 + hex(5)*256 + hex(6)*16 + hex(7);
+			comps[2] = hex(8)*4096 + hex(9)*256 + hex(10)*16 + hex(11);
 			divider = 65535;
 			break;
 		default:

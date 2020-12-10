@@ -34,15 +34,12 @@ std::string interface::add_term(string&& term) {
       logger::warn("Parsing term: Unexpected comma at: " + term);
       comma = false;
     }
-  } else if (parse(term.c_str(), data.current())) {
+  } else if (parse(term.c_str(), data[data_count])) {
 
     // Use term as numerical data
-    if (++data.count == colorspaces::component_count(from) + (int)alpha) {
+    if (++data_count == colorspaces::component_count(from) + (int)alpha) {
       // Got enough components, start the conversion
-      auto data_ptr = &data[0];
-      if (alpha)
-        data.extract_alpha(alpha_first);
-      return pop_data(data_ptr, from, to);
+      return pop_data(from, to, alpha);
     } else
       comma = false;
   } else {
@@ -78,15 +75,14 @@ std::string interface::add_term(string&& term) {
         case 'H':
           {
             // Replace data with components from the color code and start conversion
-            unsigned int a, r, g, b;
-            auto divider = parse_code(term, a, r, g, b, alpha_first);
+            component comp[4];
+            bool has_alpha;
+            auto divider = parse_code(term, &comp[0], has_alpha);
             if (divider != 0) {
               makesure_empty();
-              data.alpha = static_cast<double>(a) / divider;
-              data[0] = static_cast<double>(r) / divider;
-              data[1] = static_cast<double>(g) / divider;
-              data[2] = static_cast<double>(b) / divider;
-              return pop_data(&data[0], colorspaces::rgb, to);
+              for(int i = 0; i < 4; i++)
+                data[i] = static_cast<double>(comp[i]) / divider;
+              return pop_data(colorspaces::rgb, to, has_alpha);
             }
           }
           // fall through

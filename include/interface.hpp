@@ -17,34 +17,25 @@ struct mod {
   void apply(double* target) const;
 };
 
-struct color_data {
-  double data[5];
-  double alpha{1.0};
-  int count;
-
-  void extract_alpha(bool alpha_first);
-  double& current() { return data[count]; }
-  double& operator[](int);
-};
-
 class interface {
 public:
-  color_data data, data_cache;
+  double data[5], data_cache[5];
+  int data_count;
   colorspace from{colorspaces::rgb};
   colorspace to{colorspaces::rgb};
+  colorspace inter{colorspaces::jzazbz};
+  std::string separator{" "};
+  std::vector<mod> modifications;
   bool clamp{false};
   bool quit{false};
   bool stay{false};
   bool hex{false};
-  bool comma;
-  std::string separator{" "};
+  bool comma{false};
 
   // Support for alpha component
   bool alpha_first{true};
   bool alpha{false};
 
-  colorspace inter{colorspaces::jzazbz};
-  std::vector<mod> modifications;
 
   std::string add_term(std::string&&);
   std::string get_state();
@@ -65,6 +56,6 @@ private:
   void add_color_eater(std::string&&);
   void feed_term_eater(std::string&& data);
   void feed_color_eater();
-  std::string pop_data(double*, colorspace, colorspace);
+  std::string pop_data(colorspace, colorspace, bool);
 };
 

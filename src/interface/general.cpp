@@ -21,25 +21,12 @@ void mod::apply(double* data) const {
   }
 }
 
-double& color_data::operator[](int index) {
-  return data[index];
-}
-
-void color_data::extract_alpha(bool alpha_first) {
-  if (alpha_first) {
-    alpha = data[0];
-    data_ptr++;
-  } else
-    alpha = data[count-1];
-}
-
 // Returns the state of the interface
 string interface::get_state() {
   std::stringstream output;
   output << to_string(from) << ": "
-         << to_string(to) << "!";
-  for(int i = 0; i < count; i++)
-    output << ' ' << data[i];
+         << to_string(to) << "! ";
+  output << to_string(&data[0], data_count);
   return output.str();
 }
 
@@ -47,7 +34,7 @@ string interface::get_state() {
 void interface::clear() {
   from = colorspaces::rgb;
   to = colorspaces::rgb;
-  count = 0;
+  data_count = 0;
 }
 
 // Process an argument as a waiting term
@@ -101,8 +88,8 @@ void interface::feed_term_eater(string&& arg) {
 // Called before discarding the data
 // Display a warning message if there is unprocessed data
 void interface::makesure_empty() {
-  if (count) {
-    logger::warn("Interface: There is unprocessed data: " + to_string(&data[0], count) + ". They will be discarded");
+  if (data_count) {
+    logger::warn("Interface: There is unprocessed data: " + to_string(&data[0], data_count) + ". They will be discarded");
   }
 }
 
