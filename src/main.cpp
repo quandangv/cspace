@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
         std::getline(std::cin, input);
         pos = 0;
       } else {
-        constexpr const char space_chars[] = " \t";
+        constexpr const char space_chars[] = " \t\r\n\v\f";
 
         // Find the start of the word
         auto start = input.find_first_not_of(space_chars, pos);
