@@ -19,13 +19,13 @@ struct mod {
 
 class interface {
 public:
-  double data[5], data_cache[5];
-  int data_count;
+  double data[5];
+  int data_count{0};
   colorspace from{colorspaces::rgb};
   colorspace to{colorspaces::rgb};
   colorspace inter{colorspaces::jzazbz};
   std::string separator{" "};
-  std::vector<mod> modifications;
+  std::vector<mod> modifications{};
   bool quit{false};
   bool stay{false};
   bool comma{false};
@@ -37,11 +37,12 @@ public:
   std::string get_state();
   void clear();
   void makesure_empty();
+  bool use_hex();
+  bool use_hex(bool);
   
 private:
   std::stringstream output_stream;
   std::string term_eater;
-  std::string color_eater;
   
   void print_help();
   void process_short_switches(const std::string& switches);
@@ -49,9 +50,7 @@ private:
   template<bool, bool> bool switches(const std::string&);
 
   void add_term_eater(std::string&&);
-  void add_color_eater(std::string&&);
   void feed_term_eater(std::string&& data);
-  void feed_color_eater();
   void unexpected_comma(const std::string& term);
   std::string pop_data(colorspace, colorspace);
 };

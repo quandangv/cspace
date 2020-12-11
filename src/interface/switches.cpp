@@ -58,7 +58,7 @@ bool interface::switches(const string& term) {
   #define WAIT_TERM(a, a_full, tail, a_desc) CONTROL_TERM add_term_eater(#a_full); CONTROL_TERM_END(a, a_full:, tail, a_desc)
 
   WAIT_TERM(, mod, {comp} {op}{val}, "Apply modifications to the color before converting")
-  WAIT_TERM(i, inter, {cspace}, "Colorspace in which to apply modifications")
+  WAIT_TERM(i, inter, {cspace}, "Colorspace in which to apply mods, default: Jzazbz")
 
   CONTROL_TERM
   print_help();
@@ -81,11 +81,8 @@ bool interface::switches(const string& term) {
   CONTROL_TERM
   alpha_first = false;
   CONTROL_TERM_END(, xxxa!, , "Read and write alpha component after other components")
-  
-  CONTROL_TERM
-  output_stream << std::uppercase << std::setfill('0') << std::hex;
-  to = colorspaces::rgb;
-  CONTROL_TERM_END(, hex!, , "Print output colors in hexedecimal code")
+
+  WAIT_TERM(, hex, on/off/!, "Print output colors in hexedecimal code")
 
   WAIT_TERM(p, precision, {num}, "Set output precision to " FORMAT_BLUE({num}) " decimal places")
   
@@ -105,12 +102,16 @@ bool interface::switches(const string& term) {
     cout << "\n" FORMAT_GREEN_BOLD(Example commands:) "\n";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! FF0000h) << "Convert #FF0000 to HSV";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsl! 1 0 0) << "Convert #FF0000 to HSL";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsl! 1, 0, 0) << "Comma-separated RGB to HSL";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace cielab! hsl: 180 0.5 0.5) << "From HSL to CIELab";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace p. 9 CIELab! 0AFh) << "#00AAFF to Lab with 9 decimal places";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace p. 9 CIELab! FFFF0000FFFFh) << "Convert 16-bit colors";
-    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! 80FF0000h) << "#80FF0000 in argb format to HSV";
-    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace HSV! xxxa! FF000080H) << "#FF000080 in rgba format to HSV";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! 80FF0000h) << "#80FF0000 in ARGB format to HSV";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace hsv! 0.5, 1, 0, 0) << "Comma-separated ARGB color to HSV";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace HSV! xxxa! FF000080H) << "#FF000080 in RGBA format to HSV";
     cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace ps. 9) << "Set percision to 9 and wait for input";
+    cout INDENT(example_indent) << "  " FORMAT_GREEN(cspace mod: J *1.5 hex: on FF0022h) << "Multiply lightness of #FF0022 by 1.5";
+    cout INDENT(example_indent) << FORMAT_GREEN() << "J is the component for lightness in Jzazbz";
     cout << endl;
   }
   // }}}

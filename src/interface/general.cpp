@@ -70,18 +70,29 @@ void interface::feed_term_eater(string&& arg) {
     }
     term_eater.clear();
     
-  // Wait terms that expects a boolean argument
-  #define BOOL_WAIT_TERM(name) \
-  } else if (term_eater == #name) { \
-    term_eater.clear(); \
-    if (bool val; parse(c_str, val)) { \
-      name = val; \
-    } else if (arg == "!") \
-      name = !name; \
-    else \
-      throw interface_error("Interface-"#name": Unknown term argument: "+arg);
-  #undef BOOL_WAIT_TERM
+  } else if (term_eater == "hex") {
+    term_eater.clear();
+    if (bool val; parse(c_str, val)) {
+      use_hex(val);
+    } else if (arg == "!")
+      use_hex(!use_hex());
+    else
+      throw interface_error("Interface-hex: Unknown term argument: "+arg);
   } else throw application_error("Interface: Unknown term eater: " + term_eater);
+}
+
+bool interface::use_hex(bool value) {
+  if (value) {
+    output_stream << std::uppercase << std::setfill('0') << std::hex;
+    to = colorspaces::rgb;
+  } else {
+    output_stream << std::dec << std::setfill(' ');
+  }
+  return value;
+}
+
+bool interface::use_hex() {
+  return output_stream.flags() & std::ios::hex;
 }
 
 // Called before discarding the data
@@ -103,7 +114,4 @@ void interface::add_term_eater(string&& name) {
   if (!term_eater.empty())
     logger::warn("Term dropped without taking its required argument: " + term_eater);
   term_eater = forward<string>(name);
-}
-
-void interface::feed_color_eater() {
 }

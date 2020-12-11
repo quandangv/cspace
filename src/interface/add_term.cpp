@@ -47,7 +47,7 @@ std::string interface::add_term(string&& term) {
     unexpected_comma(term);
     
     // The term isn't data, check if it is a valid control term
-    if (term == "--help") {
+    if (term == "--help" || term == "-h") {
       print_help();
     } else {
       if (!process_long_switch(term)) {
@@ -60,9 +60,8 @@ std::string interface::add_term(string&& term) {
         case '!':
           // If any output color space is specified, disable hex output mode,
           // which was only meant to output in RGB color space
-          if (output_stream.flags() & std::ios::hex) {
-            output_stream << std::dec << std::setfill(' ');
-          }
+          if (use_hex())
+            use_hex(false);
           to = stospace(move(term));
           break;
         case '.':
