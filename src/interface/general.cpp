@@ -2,12 +2,17 @@
 
 #include <sstream>
 #include <iomanip>
+#include <cmath>
 
 using std::cout;
 using std::string;
 using std::endl;
 
 constexpr char scope[] = "interface";
+
+interface::interface() {
+  use_hex(true);
+}
 
 void mod::apply(double* data) const {
   auto& target = data[component];
@@ -51,25 +56,23 @@ void interface::feed_term_eater(string&& arg) {
     term_eater.clear();
     inter = stospace(arg);
   } else if (term_eater == "mod") {
+    logger::debug<scope>("Arguemnt: " + arg);
     if (strcasecmp(c_str, "none") == 0) {
       modifications.clear();
-    } else if (modifications.empty() || modifications.back().op != 0) {
+      term_eater.clear();
+    } else if (modifications.empty() || !std::isnan(modifications.back().value)) {
       modifications.emplace_back();
       modifications.back().component = colorspaces::parse_component(c_str, inter);
-      return;
-    } else {
-      if (double val; parse(c_str + 1, val)) {
-        modifications.back().op = arg[0];
-        modifications.back().value = val;
-        if (comma) {
-          comma = false;
-          return;
-        }
+    } else if (modifications.back().op == 0) {
+      modifications.back().op = arg[0];
+    } else if (double val; parse(c_str, val)) {
+      modifications.back().value = val;
+      if (comma) {
+        comma = false;
       } else
-        throw interface_error("Precision: Unknown term argument: "+arg);
-    }
-    term_eater.clear();
-    
+        term_eater.clear();
+    } else
+      throw interface_error("Interface-mod: Unknown term argument: "+arg);
   } else if (term_eater == "hex") {
     term_eater.clear();
     if (bool val; parse(c_str, val)) {
@@ -99,7 +102,7 @@ bool interface::use_hex() {
 // Display a warning message if there is unprocessed data
 void interface::makesure_empty() {
   if (data_count) {
-    logger::warn("Interface: There is unprocessed data: " + to_string(&data[0], data_count) + ". They will be discarded");
+    logger::warn("Interface: There is unprocessed data: " + to_string(&data[0], data_count) +". It will be discarded");
   }
 }
 

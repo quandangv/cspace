@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <cmath>
 
 #include "conversion.hpp"
 #include "parse.hpp"
@@ -11,14 +12,16 @@ DEFINE_ERROR(interface_error);
 
 struct mod {
   int component;
-  char op;
-  double value;
+  char op{0};
+  double value{std::nan("")};
 
   void apply(double* target) const;
 };
 
 class interface {
 public:
+  interface();
+
   double data[5];
   int data_count{0};
   colorspace from{colorspaces::rgb};
