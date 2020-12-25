@@ -3,6 +3,9 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <cctype>
+
+#include "token_iterator.hpp"
 
 using std::cout;
 using std::string;
@@ -51,7 +54,7 @@ void interface::feed_term_eater(string&& arg) {
     if (int val; parse(c_str, val)) {
       output_stream << std::setprecision(val);
     } else 
-      throw interface_error("Interface-precision: Unknown term argument: "+arg);
+      throw interface_error("precision: Unknown term argument: "+arg);
   } else if (term_eater == "inter") {
     term_eater.clear();
     inter = stospace(arg);
@@ -60,19 +63,27 @@ void interface::feed_term_eater(string&& arg) {
     if (strcasecmp(c_str, "none") == 0) {
       modifications.clear();
       term_eater.clear();
-    } else if (modifications.empty() || !std::isnan(modifications.back().value)) {
-      modifications.emplace_back();
-      modifications.back().component = colorspaces::parse_component(c_str, inter);
-    } else if (modifications.back().op == 0) {
-      modifications.back().op = arg[0];
-    } else if (double val; parse(c_str, val)) {
-      modifications.back().value = val;
-      if (comma) {
-        comma = false;
-      } else
-        term_eater.clear();
-    } else
-      throw interface_error("Interface-mod: Unknown term argument: "+arg);
+    } else {
+      token_iterator it(move(arg));
+      while (it.next_token_base<std::isalnum>()) {
+        auto comp = colorspaces::parse_component(it.token().data(), inter);
+        if (it.next_token() && !it.token().empty()) {
+          auto op = it.token()[0];
+          it.return_token(1);
+          if (it.next_token() && !it.token().empty()) {
+            auto token = it.token();
+            if (token.back() == ',') {
+              token.pop_back();
+            }
+            double value;
+            if (parse(token.data(), value)) {
+              modifications.emplace_back(comp, op, value);
+            } else throw interface_error("mod: Can't parse numerical value: " + it.token());
+          } else logger::warn("Interface-mod: Missing value in: " + string(c_str));
+        } else logger::warn("Interface-mod: Missing component operator and value in: " + string(c_str));
+      }
+      term_eater.clear();
+    }
   } else if (term_eater == "hex") {
     term_eater.clear();
     if (bool val; parse(c_str, val)) {
@@ -80,7 +91,7 @@ void interface::feed_term_eater(string&& arg) {
     } else if (arg == "!")
       use_hex(!use_hex());
     else
-      throw interface_error("Interface-hex: Unknown term argument: "+arg);
+      throw interface_error("hex: Unknown term argument: "+arg);
   } else throw application_error("Interface: Unknown term eater: " + term_eater);
 }
 

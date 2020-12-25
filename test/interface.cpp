@@ -5,6 +5,8 @@
 #include <vector>
 #include <sstream>
 
+#include "token_iterator.hpp"
+
 using namespace std;
 struct TestSet {
   string terms_str, result_str, expected_str, not_expected_str;
@@ -26,14 +28,15 @@ struct TestSet {
     item.clear();
     item.separator = "-";
 
-    auto terms = split_words(terms_str);
+    token_iterator it;
+    it.set_input(terms_str);
     auto expected = split_words(expected_str);
     auto not_expected = split_words(not_expected_str);
     
     // feed terms to the interface and check the result
     string real_result = "";
-    for(int i = 0; i < terms.size(); i++) {
-      auto r = item.add_term(string(terms[i]));
+    for(; it.next_token();) {
+      auto r = item.add_term(string(it.token()));
       if (!r.empty())
         real_result += r + " ";
     }
@@ -71,8 +74,10 @@ vector<TestSet> interface_tests = {
   {{"axxx! hsv! xyz: 8000FFFFh"}, {"0.501961-180-1-1 "}, {"xyz: hsv!"}, {}},
   {{"xxxa! hsv! xyz: 00FFFF80h"}, {"180-1-1-0.501961 "}, {"xyz: hsv!"}, {}},
   {{"xxxa! hex: on hsv: 180 1 1, 0.5  60 0.5 0.5, 0.2 0 1 1 0.69"}, {"00FFFF80 80804033 FF0000 "}, {"hsv: rgb! 0.69"}, {}},
-  {{"inter: hsv hex: on mod: value * 2, h + 60  002040h"}, {"400080 "}, {}, {}},
-  {{"inter: hsv hex: on mod: value = 0.75  002040h"}, {"0060BF "}, {}, {}},
+  {{"inter: hsv hex: on mod: 'value * 2, h +60'  002040h"}, {"400080 "}, {}, {}},
+  {{"inter: hsv hex: on mod: 'value* 2 h +60'  002040h"}, {"400080 "}, {}, {}},
+  {{"inter: hsv hex: on mod: 'value = 0.75'  002040h"}, {"0060BF "}, {}, {}},
+  {{"inter: hsv hex: on mod: 'value=0.75'  002040h"}, {"0060BF "}, {}, {}},
   {{"p. 3 0.987654 0.123456 0.654987  0.1 1 0.123456"}, {"FC1FA7 1AFF1F "}, {}, {}},
 };
 INSTANTIATE_TEST_SUITE_P(Interface, GetTest, ::testing::ValuesIn(interface_tests));
