@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -18,6 +20,8 @@ struct mod {
   void apply(double* target) const;
 };
 
+struct term_eater;
+
 class interface {
 public:
   interface();
@@ -34,6 +38,7 @@ public:
   bool comma{false};
   bool alpha_first{true};
   bool alpha{false};
+  std::stringstream output_stream;
 
 
   std::string add_term(std::string&&);
@@ -42,19 +47,19 @@ public:
   void makesure_empty();
   bool use_hex();
   bool use_hex(bool);
-  
-private:
-  std::stringstream output_stream;
-  std::string term_eater;
-  
   void print_help();
+  void add_term_eater(const term_eater*);
+  
+protected:
+  const term_eater* eater{nullptr};
+  
   void process_short_switches(const std::string& switches);
   bool process_long_switch(const std::string& name);
   template<bool, bool> bool switches(const std::string&);
 
-  void add_term_eater(std::string&&);
   void feed_term_eater(std::string&& data);
   void unexpected_comma(const std::string& term);
   std::string pop_data(colorspace, colorspace);
+
 };
 

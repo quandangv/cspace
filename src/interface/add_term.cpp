@@ -23,13 +23,11 @@ std::string interface::add_term(string&& term) {
       comma = true;
   }
 
-  if (!term_eater.empty()) {
-
+  if (eater != nullptr) {
     // Feed term eater
     feed_term_eater(move(term));
     unexpected_comma(term);
   } else if (parse(term.c_str(), data[data_count])) {
-
     // Use term as numerical data
     if (++data_count >= colorspaces::component_count(from)) {
       if (comma) {
