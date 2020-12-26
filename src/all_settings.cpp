@@ -13,7 +13,7 @@ using std::endl;
 constexpr char scope[] = "interface";
 
 struct : short_setting {
-  string long_name() const { return "help!"; }
+  string long_name() const { return "help"; }
   char short_name() const { return 'h'; }
   string description() const { return "Show this help message"; }
   void action(interface& intf) const { intf.print_help(); }
@@ -26,7 +26,7 @@ struct : basic_setting {
 } _colorspaces;
 
 struct : basic_setting {
-  string long_name() const { return "swap!"; }
+  string long_name() const { return "swap"; }
   string description() const { return "Swap 'from' and 'to' color spaces"; }
   void action(interface& intf) const {
     auto tmp = intf.from;
@@ -36,13 +36,13 @@ struct : basic_setting {
 } _swap;
 
 struct : basic_setting {
-  string long_name() const { return "axxx!"; }
+  string long_name() const { return "axxx"; }
   string description() const { return "Read and write alpha component before other components"; }
   void action(interface& intf) const { intf.alpha_first = true; }
 } _alpha_first;
 
 struct : basic_setting {
-  string long_name() const { return "xxxa!"; }
+  string long_name() const { return "xxxa"; }
   string description() const { return "Read and write alpha component after other components"; }
   void action(interface& intf) const { intf.alpha_first = false; }
 } _alpha_last;
@@ -50,8 +50,8 @@ struct : basic_setting {
 struct : eater_setting<short_setting> {
   string long_name() const { return "precision:"; }
   char short_name() const { return 'p'; }
-  string arguments() const { return "{num}"; }
-  string description() const { return "Set output precision to {num} decimal places"; }
+  string arguments() const { return "<num>"; }
+  string description() const { return "Set output precision to <num> decimal places"; }
   void eat(string&& s, interface& intf) const {
     if (int val; parse(s.data(), val)) {
       intf.output_stream << std::setprecision(val);
@@ -63,7 +63,7 @@ struct : eater_setting<short_setting> {
 struct : eater_setting<short_setting> {
   string long_name() const { return "inter:"; }
   char short_name() const { return 'i'; }
-  string arguments() const { return "{cspace}"; }
+  string arguments() const { return "<cspace>"; }
   string description() const { return "Colorspace in which to apply mods, default: Jzazbz"; }
   void eat(string&& s, interface& intf) const {
     intf.inter = stospace(s);
@@ -86,25 +86,26 @@ struct : eater_setting<basic_setting> {
 
 struct : eater_setting<basic_setting> {
   string long_name() const { return "mod:"; }
-  string arguments() const { return "{comp}{op}{value}"; }
+  string arguments() const { return "'<comp><op><val>'"; }
   string description() const { return "Apply modifications to the color before converting"; }
   void eat(string&& s, interface& intf) const {
     if (strcasecmp(s.data(), "none") == 0) {
       intf.modifications.clear();
     } else {
+      // The argument for this setting follows the format: <component> <operator> <value>, ...
       token_iterator it(move(s));
       while (it.next_token_base<std::isalnum>()) {
+        // First token is the component
         auto comp = colorspaces::parse_component(it.token().data(), intf.inter);
-        if (it.next_token() && !it.token().empty()) {
+        if (it.next_token_base<std::ispunct>() && !it.token().empty()) {
+          // Next is the operator, which takes a single character
           auto op = it.token()[0];
-          it.return_token(1);
           if (it.next_token() && !it.token().empty()) {
+            // Last is the value
             auto token = it.token();
-            if (token.back() == ',') {
-              token.pop_back();
-            }
-            double value;
-            if (parse(token.data(), value)) {
+            if (token.back() == ',') token.pop_back();
+            if (double value; parse(token.data(), value)) {
+              // If all are parsed successfully, add the new modification
               intf.modifications.emplace_back(comp, op, value);
             } else throw interface_error("mod: Can't parse numerical value: " + it.token());
           } else logger::warn("Interface-mod: Missing value in: " + s);
@@ -115,14 +116,14 @@ struct : eater_setting<basic_setting> {
 } _mod;
 
 struct : short_setting {
-  string long_name() const { return "stay!"; }
+  string long_name() const { return "stay"; }
   char short_name() const { return 's'; }
   string description() const { return "Wait for further input rather than quitting immediately"; }
   void action(interface& intf) const { intf.stay = true; }
 } _stay;
 
 struct : short_setting {
-  string long_name() const { return "quit!"; }
+  string long_name() const { return "quit"; }
   char short_name() const { return 'q'; }
   string description() const { return "Quit program"; }
   void action(interface& intf) const { intf.quit = true; }

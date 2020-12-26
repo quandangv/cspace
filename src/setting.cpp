@@ -22,13 +22,13 @@ void basic_setting::print_help() const {
   std::cout << std::endl << std::setw(term_indent) << std::left << "  " + long_name() + " " + arguments() << description();
 }
 
-void short_setting::print_help() const {
-  std::cout << std::endl << std::setw(term_indent) << std::left << "  " + string{short_name()} + "., " + long_name() + " " + arguments() << description();
-}
-
 void short_setting::on_short_switches(const string& switches, interface& intf) const {
   if (switches.find(short_name()) != string::npos) {
     action(intf);
   }
+}
+
+void short_setting::print_help() const {
+  std::cout << std::endl << std::setw(term_indent) << std::left << "  " + string{short_name()} + "., " + long_name() + " " + arguments() << description();
 }
 

@@ -10,40 +10,43 @@ using namespace std;
 constexpr const char scope[] = "main";
 
 int main(int argc, char** argv) {
-  interface processor;
+  interface intf;
 
-  // This will return the next argument as a string
-  // If all arguments have been returned, read from stdin and get the next word.
-  auto read_word = [&]()->string {
+  // Read the next term to feed to the interface
+  auto read_term = [&]()->string {
+    // First, read from the arguments
     static int argi = 1;
     if (argi <= argc) {
-      // If all arguments have been returned and stay switch is off, make the program quit
-      if (argi++ == argc) {
-        if (!processor.stay) {
-          processor.quit = true;
-          return "";
-        }
-      } else return string(argv[argi - 1]);
+      if (argi < argc)
+        return string(argv[argi++]);
+      else if (!intf.stay) {
+        // If we aren't told to stay, quit when the argument runs out.
+        intf.quit = true;
+        return "";
+      } else
+        argi++;
     }
 
+    // Then, read terms from stdin
     static token_iterator it;
     while(!it.next_token()) {
+      // If the iterator runs out of tokens, feed it the next line from stdin
       std::getline(std::cin, it.input);
       it.position = 0;
     }
     return it.token();
   };
 
-  // Continually feed terms to the interface;
-  while(!processor.quit) {
+  // Continually feed terms to the interface and prints the output
+  while(!intf.quit) {
     try {
-      auto result = processor.add_term(read_word());
+      auto result = intf.add_term(read_term());
       if (!result.empty())
         std::cout << result << std::endl;
-      logger::debug<scope>("End of a term, quit: " + to_string(processor.quit));
     } catch (const exception& err) {
       logger::error(err.what());
     }
   }
-  processor.makesure_empty();
+  // Print a warning if there is unprocessed data remaining
+  intf.makesure_empty();
 }

@@ -18,6 +18,7 @@ interface::interface() {
   use_hex(true);
 }
 
+// Apply the right operator to the right component, with the right value
 void mod::apply(double* data) const {
   auto& target = data[component];
   switch(op) {
@@ -53,6 +54,7 @@ void interface::feed_term_eater(string&& arg) {
   eater = nullptr;
 }
 
+// Turns on or off hexedecimal output mode
 bool interface::use_hex(bool value) {
   if (value) {
     output_stream << std::uppercase << std::setfill('0') << std::hex;
@@ -82,6 +84,7 @@ void interface::unexpected_comma(const string& term) {
   }
 }
 
+// Term eater are objects that consumes input terms to modify the interface
 void interface::add_term_eater(const term_eater* e) {
   if (eater != nullptr)
     logger::warn("Term dropped without taking its required argument");
@@ -115,12 +118,14 @@ void interface::print_help() {
   #undef INDENT
 }
 
+// Short switches are indivitual characters, each representing a different settings, in a single term
 void interface::process_short_switches(const string& names) {
   for(auto& s : all_settings) {
     s->on_short_switches(names, *this);
   }
 }
 
+// Long switches are terms that represent a specific setting
 bool interface::process_long_switch(const string& name) {
   for(auto& s : all_settings) {
     if (s->on_long_switch(name, *this))

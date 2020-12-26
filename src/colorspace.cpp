@@ -33,6 +33,7 @@ string to_string(colorspace value) {
   throw colorspace_error("Unknown colorspace: "s + to_string(value));
 }
 
+// Returns a string containing all supported colorspaces
 string list_colorspaces(const string& sep) {
   string result;
   bool first = true;
@@ -127,7 +128,8 @@ namespace colorspaces {
     else if (value > max)
       value = max;
   }
-  
+
+  // Clamp color data to the right range of the specified color space
   void clamp(double* value, colorspace space) {
     switch (space) {
     case cmyk:
@@ -149,6 +151,7 @@ namespace colorspaces {
     }
   }
 
+  // Returns the component index from the component name and the color space
   int parse_component(const char* name, colorspace space) {
     #define CASE(word, val) if(strcasecmp(name, #word) == 0) return val;
     if (space == rgb) {

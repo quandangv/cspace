@@ -9,12 +9,14 @@ using std::endl;
 constexpr char scope[] = "interface";
 
 // Process the given term
-// If the term triggers a conversion, return the resulting string
+// If the term triggers an operation, the resulting string is returned
 std::string interface::add_term(string&& term) {
   logger::debug<scope>("Interface-Term: '" + term + "'");
   unexpected_comma(term);
   if (term.empty()) return "";
   if (term.back() == ',') {
+    // Extract the comma from the end of the term
+    // The comma is used to signify the presence of the alpha component
     term.pop_back();
     if (term.empty()) {
       logger::warn("Parsing term: Orphaned comma ',', put commas at the end of a term without spaces");
@@ -25,30 +27,31 @@ std::string interface::add_term(string&& term) {
 
   if (eater != nullptr) {
     // Feed term eater
+    // They are terms that takes in additional arguments
     feed_term_eater(move(term));
     unexpected_comma(term);
   } else if (parse(term.c_str(), data[data_count])) {
-    // Use term as numerical data
+    // The term contains numerical data
     if (++data_count >= colorspaces::component_count(from)) {
       if (comma) {
-        comma = false;
-        if (alpha)
-          throw new interface_error("Add-term: Enough components have been received, excess comma at: " + term);
+        // The alpha component is present, add another component before we start the operation
+        if (alpha) throw new interface_error("Add-term: Enough components have been received, excess comma at: " + term);
         else
           alpha = true;
       } else
-        // Got enough components, start the conversion
+        // Got enough components, start the operation
         return pop_data(from, to);
-    } else
-      comma = false;
+    }
+    comma = false;
   } else {
+    // Processing the switches, no commas expected here
     unexpected_comma(term);
     
-    // The term isn't data, check if it is a valid control term
     if (term == "--help" || term == "-h") {
       print_help();
     } else {
       if (!process_long_switch(term)) {
+        // The term isn't a long switch, it's one of the special switches
         auto control_char = term.back();
         term.pop_back();
         switch(control_char) {
@@ -56,8 +59,8 @@ std::string interface::add_term(string&& term) {
           from = stospace(term);
           break;
         case '!':
-          // If any output color space is specified, disable hex output mode,
-          // which was only meant to output in RGB color space
+          // If any output color space is specified, disable hex output mode
+          // It's only meant to output in RGB color space
           if (use_hex())
             use_hex(false);
           to = stospace(move(term));
@@ -67,6 +70,7 @@ std::string interface::add_term(string&& term) {
           break;
         case 'h':
         case 'H':
+          // This is input in the hexedecimal format
           {
             // Replace data with components from the color code and start conversion
             component comp[4];
@@ -78,7 +82,7 @@ std::string interface::add_term(string&& term) {
               return pop_data(colorspaces::rgb, to);
             }
           }
-          // fall through
+          // If the hexedecimal parsing failed, fall through
         default:
           term.push_back(control_char);
           logger::error("Parsing: Unknown term '" + term + "'");

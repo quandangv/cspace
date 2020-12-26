@@ -5,8 +5,8 @@
 using std::string;
 
 struct token_iterator {
-  token_iterator() {}
-  token_iterator(string&& s) : input(move(s)), position(0) {}
+  token_iterator(string&& s) : input(move(s)), position(0), mark(0) {}
+  token_iterator() : token_iterator("") {}
   
   string input;
   size_t position;
@@ -23,10 +23,12 @@ private:
 
 };
 
+// Template implementation
 #include <cstring>
 #include "logger.hpp"
 
-template<int (*F)(int)>
+// Find the next token that contains only the characters accepted by char_func
+template<int (*char_func)(int)>
 bool token_iterator::next_token_base() {
   while(true) {
     if (input.empty() || position == string::npos) {
@@ -35,30 +37,29 @@ bool token_iterator::next_token_base() {
       constexpr const char space_chars[] = " \t\r\n\v\f";
       constexpr const char quote_chars[] = "'\"";
 
-      // Find the start of the word
+      // Find the start of the token, ignoring spaces
       mark = input.find_first_not_of(space_chars, position);
       if (mark == string::npos)
         return false;
 
       if (strchr(quote_chars, input[mark]) != nullptr) {
+        // Parse terms enclosed in quotes
         position = input.find(input[mark], mark + 1);
         mark++;
         if (position == string::npos) {
           m_token = input.substr(mark);
-          logger::warn("Unterminated string: " + m_token);
+          logger::warn("Unterminated quotes: " + m_token);
         } else {
           m_token = input.substr(mark, position - mark);
           position++;
         }
         return true;
       } else {
+        // Extend the length of the term until we hit an unaccepted character
         for(position = mark+1; position < input.size(); position++)
-          if (!F(input[position]))
+          if (!char_func(input[position]))
             break;
-        if (position == string::npos) {
-          m_token = input.substr(mark);
-        } else
-          m_token = input.substr(mark, position - mark);
+        m_token = input.substr(mark, position - mark);
         return true;
       }
     }

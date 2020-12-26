@@ -4,6 +4,7 @@
 
 #include "logger.hpp"
 
+// Set the string from which to extract tokens and the position to start extracting
 token_iterator& token_iterator::set_input(string inp, size_t pos) {
   input = inp;
   position = pos;
@@ -14,10 +15,12 @@ int isntspace(int c) {
   return !std::isspace(c);
 }
 
+// Advance to the next token made up of non-space characters
 bool token_iterator::next_token() {
-  return  next_token_base<isntspace>();
+  return next_token_base<isntspace>();
 }
 
+// Return part of the current token to be used for the next one
 token_iterator& token_iterator::return_token(size_t from) {
   position = mark + from;
   return *this;
