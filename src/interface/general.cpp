@@ -27,8 +27,38 @@ void mod::apply(double* data) const {
   case '*': target *= value; break;
   case '/': target /= value; break;
   case '=': target = value; break;
-  default: throw interface_error("Unknown operator: " + string{op});
+  default: throw interface_error("Mod: Unknown operator: " + string{op});
   }
+}
+
+mod::mod(token_iterator& it, colorspace space) {
+  logger::debug<scope>("Construct mod: " + it.input);
+  // The argument for this setting follows the format: <component> <operator> <value>, ...
+  // First token is the component
+  if (!it.next_token_base<std::isalnum>()) {
+    component = 0;
+    op = 0;
+    value = 0;
+    return;
+  }
+  component = colorspaces::parse_component(it.token().data(), space);
+  logger::debug<scope>("Mod component: '" + it.token() + "', value: " + to_string(component));
+
+  // Next is the operator, which takes a single character
+  if (!it.next_token_base<std::ispunct>() || it.token().empty())
+    logger::warn("Interface-mod: Missing component operator and value in: " + it.input);
+  op = it.token()[0];
+  logger::debug<scope>("Mod operator: " + it.token());
+
+  // Last is the value
+  if (!it.next_token() || it.token().empty())
+    logger::warn("Interface-mod: Missing value in: " + it.input);
+  auto token = it.token();
+  if (token.back() == ',') {
+    token.pop_back();
+  }
+  if (!parse(token.data(), value))
+    throw interface_error("mod: Can't parse numerical value: " + it.token());
 }
 
 // Returns the state of the interface

@@ -13,6 +13,7 @@ struct token_iterator {
   size_t mark;
 
   token_iterator& set_input(string, size_t = 0);
+  bool have_token();
   bool next_token();
   token_iterator& return_token(size_t from);
   const string& token() const;
@@ -22,6 +23,9 @@ private:
   string m_token;
 
 };
+
+constexpr const char space_chars[] = " \t\r\n\v\f";
+constexpr const char quote_chars[] = "'\"";
 
 // Template implementation
 #include <cstring>
@@ -34,9 +38,6 @@ bool token_iterator::next_token_base() {
     if (input.empty() || position == string::npos) {
       return false;
     } else {
-      constexpr const char space_chars[] = " \t\r\n\v\f";
-      constexpr const char quote_chars[] = "'\"";
-
       // Find the start of the token, ignoring spaces
       mark = input.find_first_not_of(space_chars, position);
       if (mark == string::npos)

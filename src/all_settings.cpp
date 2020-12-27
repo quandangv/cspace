@@ -92,24 +92,9 @@ struct : eater_setting<basic_setting> {
     if (strcasecmp(s.data(), "none") == 0) {
       intf.modifications.clear();
     } else {
-      // The argument for this setting follows the format: <component> <operator> <value>, ...
       token_iterator it(move(s));
-      while (it.next_token_base<std::isalnum>()) {
-        // First token is the component
-        auto comp = colorspaces::parse_component(it.token().data(), intf.inter);
-        if (it.next_token_base<std::ispunct>() && !it.token().empty()) {
-          // Next is the operator, which takes a single character
-          auto op = it.token()[0];
-          if (it.next_token() && !it.token().empty()) {
-            // Last is the value
-            auto token = it.token();
-            if (token.back() == ',') token.pop_back();
-            if (double value; parse(token.data(), value)) {
-              // If all are parsed successfully, add the new modification
-              intf.modifications.emplace_back(comp, op, value);
-            } else throw interface_error("mod: Can't parse numerical value: " + it.token());
-          } else logger::warn("Interface-mod: Missing value in: " + s);
-        } else logger::warn("Interface-mod: Missing component operator and value in: " + s);
+      while(it.have_token()) {
+        intf.modifications.emplace_back(it, intf.inter);
       }
     }
   }

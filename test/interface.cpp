@@ -16,6 +16,7 @@ struct TestSet {
     while(ss.good()) {
       string term;
       ss >> term;
+        std::string operate(double* data);
       if (!term.empty()) {
         if (term == "_")
           term = "";

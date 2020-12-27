@@ -15,6 +15,13 @@ int isntspace(int c) {
   return !std::isspace(c);
 }
 
+bool token_iterator::have_token() {
+  position = input.find_first_not_of(space_chars, position);
+  if (position == string::npos)
+    return false;
+  return true;
+}
+
 // Advance to the next token made up of non-space characters
 bool token_iterator::next_token() {
   return next_token_base<isntspace>();

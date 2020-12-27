@@ -9,6 +9,7 @@
 #include "parse.hpp"
 #include "logger.hpp"
 #include "error.hpp"
+#include "token_iterator.hpp"
 
 DEFINE_ERROR(interface_error);
 
@@ -16,6 +17,8 @@ struct mod {
   int component;
   char op{0};
   double value{std::nan("")};
+
+  mod(token_iterator&, colorspace);
 
   void apply(double* target) const;
 };
@@ -30,17 +33,18 @@ public:
   int data_count{0};
   colorspace from{colorspaces::rgb};
   colorspace to{colorspaces::rgb};
+  bool quit{false};
+  bool stay{false};
+
   colorspace inter{colorspaces::jzazbz};
   std::string separator{" "};
   std::vector<mod> modifications{};
-  bool quit{false};
-  bool stay{false};
-  bool comma{false};
   bool alpha_first{true};
-  bool alpha{false};
   std::stringstream output_stream;
 
-
+  std::string operate(double* data, colorspace, colorspace);
+  std::string pop_data();
+  std::string pop_data(colorspace, colorspace);
   std::string add_term(std::string&&);
   std::string get_state();
   void clear();
@@ -52,6 +56,8 @@ public:
   
 protected:
   const term_eater* eater{nullptr};
+  bool comma{false};
+  bool alpha{false};
   
   void process_short_switches(const std::string& switches);
   bool process_long_switch(const std::string& name);
@@ -59,7 +65,6 @@ protected:
 
   void feed_term_eater(std::string&& data);
   void unexpected_comma(const std::string& term);
-  std::string pop_data(colorspace, colorspace);
 
 };
 
