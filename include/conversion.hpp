@@ -1,4 +1,7 @@
 #pragma once
+#include "common.h"
+
+GLOBAL_NAMESPACE
 
 void rgb_hsl(const double*, double*); 
 void hsl_rgb(const double*, double*); 
@@ -15,3 +18,4 @@ void ch_ab(const double*, double*);
 void rgb_cmyk(const double*, double*);
 void cmyk_rgb(const double*, double*);
 
+GLOBAL_NAMESPACE_END

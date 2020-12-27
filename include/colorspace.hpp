@@ -1,6 +1,9 @@
 #pragma once
+#include "common.h"
 
 #include "error.hpp"
+
+GLOBAL_NAMESPACE
 
 DEFINE_ERROR(colorspace_error)
 
@@ -41,4 +44,4 @@ namespace colorspaces {
   int parse_component(const char* name, colorspace);
 }
 
-
+GLOBAL_NAMESPACE_END

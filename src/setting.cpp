@@ -6,6 +6,8 @@
 #include "interface.hpp"
 #include "logger.hpp"
 
+GLOBAL_NAMESPACE
+
 constexpr int term_indent = 24;
 constexpr char scope[] = "setting";
 
@@ -32,3 +34,4 @@ void short_setting::print_help() const {
   std::cout << std::endl << std::setw(term_indent) << std::left << "  " + string{short_name()} + "., " + long_name() + " " + arguments() << description();
 }
 
+GLOBAL_NAMESPACE_END

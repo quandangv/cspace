@@ -5,6 +5,8 @@
 
 #include "logger.hpp"
 
+GLOBAL_NAMESPACE
+
 using namespace std;
 
 // Convert the right number components of the given colorspace to string
@@ -105,3 +107,5 @@ bool parse(const char* str, bool& result) {
   return true;
   #undef CMP
 }
+
+GLOBAL_NAMESPACE_END

@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+GLOBAL_NAMESPACE
+
 // this is added mainly to make sure we are capable of working with 4-component colorspaces
 
 void rgb_cmyk(const double* input, double* output) {
@@ -22,3 +24,5 @@ void cmyk_rgb(const double* input, double* output) {
   output[1] = 1 - input[1] - input[3];
   output[2] = 1 - input[2] - input[3];
 }
+
+GLOBAL_NAMESPACE_END

@@ -2,9 +2,9 @@
 
 #include <iomanip>
 
-using std::cout;
-using std::string;
-using std::endl;
+#include "parse.hpp"
+
+GLOBAL_NAMESPACE
 
 constexpr char scope[] = "interface";
 
@@ -40,7 +40,7 @@ std::string interface::add_term(string&& term) {
           alpha = true;
       } else
         // Got enough components, start the operation
-        return pop_data(from, to);
+        return pop_data(from);
     }
     comma = false;
   } else {
@@ -63,7 +63,7 @@ std::string interface::add_term(string&& term) {
           // It's only meant to output in RGB color space
           if (use_hex())
             use_hex(false);
-          to = stospace(move(term));
+          target = stospace(move(term));
           break;
         case '.':
           process_short_switches(term);
@@ -79,7 +79,7 @@ std::string interface::add_term(string&& term) {
               makesure_empty();
               for(int i = 0; i < 4; i++)
                 data[i] = static_cast<double>(comp[i]) / divider;
-              return pop_data(colorspaces::rgb, to);
+              return pop_data(colorspaces::rgb);
             }
           }
           // If the hexedecimal parsing failed, fall through
@@ -94,3 +94,4 @@ std::string interface::add_term(string&& term) {
   return "";
 }
 
+GLOBAL_NAMESPACE_END

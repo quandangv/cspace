@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+GLOBAL_NAMESPACE
+
 void ab_ch(const double* i, double* o) {
   auto h = atan2(i[2], i[1]);
   h = h > 0 ? (h / M_PI) * 180 : 360 + h / M_PI * 180;
@@ -17,3 +19,5 @@ void ch_ab(const double* i, double* o) {
   o[2] = sin(h) * chroma;
   o[0] = i[0];
 }
+
+GLOBAL_NAMESPACE_END

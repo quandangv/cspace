@@ -3,6 +3,8 @@
 #include "logger.hpp"
 #include "conversion.hpp"
 
+GLOBAL_NAMESPACE
+
 using namespace std;
 
 // All colorspaces goes here
@@ -215,3 +217,4 @@ namespace colorspaces {
   }
 }
 
+GLOBAL_NAMESPACE_END

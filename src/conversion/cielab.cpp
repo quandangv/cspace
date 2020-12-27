@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+GLOBAL_NAMESPACE
+
 // source: https://en.wikipedia.org/wiki/CIELAB_color_space
 
 constexpr double Xn = 0.950489;
@@ -35,3 +37,4 @@ void cielab_xyz(const double* input, double* output) {
   output[2] = Zn * inv_f(lp - input[2] / 2);
 }
 
+GLOBAL_NAMESPACE_END

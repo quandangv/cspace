@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+GLOBAL_NAMESPACE
+
 // source: https://en.wikipedia.org/wiki/HSL_and_HSV
 
 template<bool l>
@@ -58,3 +60,5 @@ void hsv_rgb(const double* input, double* output) {
   output[1] = f(3);
   output[2] = f(1);
 }
+
+GLOBAL_NAMESPACE_END

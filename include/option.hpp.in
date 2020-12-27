@@ -5,3 +5,6 @@
 using namespace std::literals;
 
 constexpr auto DEBUG_SCOPES{"@DEBUG_SCOPES@"sv};
+
+#define GLOBAL_NAMESPACE namespace @PROJECT_NAME@ {
+#define GLOBAL_NAMESPACE_END }

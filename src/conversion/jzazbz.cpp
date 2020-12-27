@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+GLOBAL_NAMESPACE
+
 // source: https://www.osapublishing.org/oe/fulltext.cfm?uri=oe-25-13-15131&id=368272
 
 constexpr double c1 = 0xD60p-12;
@@ -47,3 +49,5 @@ void jzazbz_xyz(const double* i, double* o) {
   o[0] = (xp + 0.15*o[2]) / 1.15;
   o[1] = (yp - 0.34*o[0]) / 0.66;
 }
+
+GLOBAL_NAMESPACE_END

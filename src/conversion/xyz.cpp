@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+GLOBAL_NAMESPACE
+
 // source: http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
 
 inline double gamma(double x) {
@@ -24,3 +26,5 @@ void rgb_xyz(const double* i, double* o, double white_lum) {
   o[1] = 0.2126729*r + 0.7151522*g +  0.0721750*b;
   o[2] = 0.0193339*r + 0.1191920*g +  0.9503041*b;
 }
+
+GLOBAL_NAMESPACE_END

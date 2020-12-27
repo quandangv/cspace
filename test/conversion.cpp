@@ -7,6 +7,7 @@
 #include "parse.hpp"
 
 using namespace std;
+using namespace cspace;
 
 constexpr double tolerance=0.0001;
 

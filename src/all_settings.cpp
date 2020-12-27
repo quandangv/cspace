@@ -1,14 +1,14 @@
 #include "interface.hpp"
 
 #include <iomanip>
+#include <iostream>
 
 #include "format.hpp"
 #include "setting.hpp"
 #include "token_iterator.hpp"
+#include "parse.hpp"
 
-using std::cout;
-using std::string;
-using std::endl;
+GLOBAL_NAMESPACE
 
 constexpr char scope[] = "interface";
 
@@ -22,7 +22,7 @@ struct : short_setting {
 struct : basic_setting {
   string long_name() const { return "colorspaces?"; }
   string description() const { return "List supported color spaces"; }
-  void action(interface& intf) const { cout << list_colorspaces(" "); }
+  void action(interface& intf) const { std::cout << list_colorspaces(" "); }
 } _colorspaces;
 
 struct : basic_setting {
@@ -30,8 +30,8 @@ struct : basic_setting {
   string description() const { return "Swap 'from' and 'to' color spaces"; }
   void action(interface& intf) const {
     auto tmp = intf.from;
-    intf.from = intf.to;
-    intf.to = tmp;
+    intf.from = intf.target;
+    intf.target = tmp;
   }
 } _swap;
 
@@ -116,3 +116,4 @@ struct : short_setting {
 
 const std::vector<setting*> all_settings = {&_help, &_colorspaces, &_swap, &_alpha_first, &_alpha_last, &_quit, &_stay, &_inter, &_hex, &_precision, &_mod};
 
+GLOBAL_NAMESPACE_END

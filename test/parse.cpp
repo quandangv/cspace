@@ -7,6 +7,8 @@
 #include "option.hpp"
 
 using namespace std;
+using namespace cspace;
+
 struct TestCompoments {
   bool has_alpha;
   int divider;

@@ -4,6 +4,8 @@
 
 #include "interface.hpp"
 
+GLOBAL_NAMESPACE
+
 using std::string;
 
 class interface;
@@ -50,3 +52,4 @@ struct eater_setting : T, term_eater {
 // Contains instances of all the settings used by the interface
 extern const std::vector<setting*> all_settings;
 
+GLOBAL_NAMESPACE_END
