@@ -29,7 +29,6 @@ constexpr const char quote_chars[] = "'\"";
 
 // Template implementation
 #include <cstring>
-#include "logger.hpp"
 
 // Find the next token that contains only the characters accepted by char_func
 template<int (*char_func)(int)>
@@ -49,7 +48,7 @@ bool token_iterator::next_token_base() {
         mark++;
         if (position == string::npos) {
           m_token = input.substr(mark);
-          logger::warn("Unterminated quotes: " + m_token);
+          // WARNING: Unterminated quotes
         } else {
           m_token = input.substr(mark, position - mark);
           position++;

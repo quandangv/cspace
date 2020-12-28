@@ -39,7 +39,7 @@ bool expect_near(const double* output, const double* expected, const double* inp
   auto result = true;
   auto in_space = stospace(from.c_str());
   auto out_space = stospace(to.c_str());
-  for(int i = 0; i < colorspaces::component_count(out_space); i++)
+  for(int i = 0; i < component_count(out_space); i++)
     if (std::abs(output[i] - expected[i]) > tolerance)
       result = false;
 
@@ -72,11 +72,11 @@ TEST_P(GetTest, indirect) {
   auto test_set = GetParam();
 #define TEST_METHOD(a, b, compare) \
   test = test_set.a; \
-  colorspaces::convert(test.comp, colorspaces::a, colorspaces::b); \
+  convert(test.comp, colorspaces::a, colorspaces::b); \
   // convert to a uniform colorspace to compare colors accurately \
-  colorspaces::convert(test.comp, colorspaces::b, colorspaces::compare); \
+  convert(test.comp, colorspaces::b, colorspaces::compare); \
   expected = test_set.b; \
-  colorspaces::convert(expected.comp, colorspaces::a, colorspaces::compare); \
+  convert(expected.comp, colorspaces::a, colorspaces::compare); \
   expect_near(test.comp, expected.comp, test_set.a.comp, test_set.rgb.comp, #a, #b);
 #define TEST_ROUTE(a, b, cmp) TEST_METHOD(a, b, cmp) TEST_METHOD(b, a, cmp)
   TEST_ROUTE(hsv, hsl, rgb)

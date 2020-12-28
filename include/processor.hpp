@@ -1,5 +1,4 @@
 #pragma once
-#include "common.h"
 
 #include <vector>
 #include <sstream>
@@ -8,37 +7,33 @@
 #include "token_iterator.hpp"
 #include "colorspace.hpp"
 
-GLOBAL_NAMESPACE
+namespace cspace {
+  struct mod {
+    int component;
+    char op{0};
+    double value{std::nan("")};
 
-DEFINE_ERROR(processor_error)
+    mod(int component, char op, double value) : component(component), op(op), value(value) {}
+    mod(token_iterator&, colorspace);
 
-struct mod {
-  int component;
-  char op{0};
-  double value{std::nan("")};
+    void apply(double* target) const;
+  };
 
-  mod(int component, char op, double value) : component(component), op(op), value(value) {}
-  mod(token_iterator&, colorspace);
+  class processor {
+  public:
+    colorspace target{colorspaces::rgb};
+    colorspace inter{colorspaces::jzazbz};
+    std::string separator{" "};
+    std::vector<mod> modifications{};
+    bool alpha_first{true};
+    std::stringstream output_stream;
 
-  void apply(double* target) const;
-};
+    processor();
 
-class processor {
-public:
-  colorspace target{colorspaces::rgb};
-  colorspace inter{colorspaces::jzazbz};
-  std::string separator{" "};
-  std::vector<mod> modifications{};
-  bool alpha_first{true};
-  std::stringstream output_stream;
-
-  processor();
-
-  bool use_hex();
-  bool use_hex(bool);
-  std::string operate(double* data, bool have_alpha, colorspace from);
-  std::string get_state();
-  void clear();
-};
-
-GLOBAL_NAMESPACE_END
+    bool use_hex();
+    bool use_hex(bool);
+    std::string operate(double* data, bool have_alpha, colorspace from);
+    std::string get_state();
+    void clear();
+  };
+}

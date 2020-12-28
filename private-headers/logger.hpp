@@ -1,12 +1,7 @@
 #pragma once
-
-#include <string>
-
-#include "option.hpp"
+#include "common.hpp"
 
 namespace logger {
-  using std::string;
-  
   void info(const string& text);
   void error(const string& text);
   void warn(const string& text);

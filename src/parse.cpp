@@ -1,17 +1,18 @@
 #include "parse.hpp"
+#include "logger.hpp"
 
 #include <sstream>
 #include <iomanip>
 
-#include "logger.hpp"
-
 GLOBAL_NAMESPACE
+
+DEFINE_ERROR(parse_error)
 
 using namespace std;
 
 // Convert the right number components of the given colorspace to string
 string to_string(const double* arr, colorspace space) {
-  return to_string(arr, colorspaces::component_count(space));
+  return to_string(arr, component_count(space));
 }
 
 string to_string(const double* arr, int count) {

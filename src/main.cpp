@@ -1,10 +1,8 @@
 #include <iostream>
 
-#include "conversion.hpp"
-#include "interface.hpp"
-#include "parse.hpp"
-#include "logger.hpp"
 #include "token_iterator.hpp"
+#include "interface.hpp"
+#include "logger.hpp"
 
 using namespace std;
 using namespace cspace;

@@ -9,6 +9,7 @@ if(PLATFORM_LINUX)
   add_compile_definitions(PLATFORM_LINUX)
 endif()
 
+add_subdirectory(private-headers)
 add_subdirectory(include)
 add_subdirectory(src)
 

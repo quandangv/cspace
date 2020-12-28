@@ -1,4 +1,5 @@
 #include "processor.hpp"
+#include "logger.hpp"
 
 #include <iomanip>
 
@@ -6,6 +7,7 @@
 
 GLOBAL_NAMESPACE
 
+DEFINE_ERROR(processor_error)
 constexpr char scope[] = "processor";
 
 // Apply the right operator to the right component, with the right value
@@ -31,7 +33,7 @@ mod::mod(token_iterator& it, colorspace space) {
     value = 0;
     return;
   }
-  component = colorspaces::parse_component(it.token().data(), space);
+  component = parse_component(it.token().data(), space);
   logger::debug<scope>("Mod component: '" + it.token() + "', value: " + to_string(component));
 
   // Next is the operator, which takes a single character
@@ -60,17 +62,17 @@ string processor::operate(double* data, bool have_alpha, colorspace from) {
   auto data_ptr = &data[(int)(have_alpha && alpha_first)];
   if (!modifications.empty()) {
     // Convert to the intermediate color space and do the modifications
-    colorspaces::convert(data_ptr, from, inter);
+    convert(data_ptr, from, inter);
     for(auto mod : modifications)
       mod.apply(data_ptr);
-    colorspaces::convert(data_ptr, inter, target);
+    convert(data_ptr, inter, target);
   } else
     // Convert to the destination color space directly
-    colorspaces::convert(data_ptr, from, target);
-  colorspaces::clamp(data_ptr, target);
+    convert(data_ptr, from, target);
+  clamp(data_ptr, target);
   
   // Print data to output stream
-  auto comp_count = colorspaces::component_count(target) + (int)have_alpha;
+  auto comp_count = component_count(target) + (int)have_alpha;
   if (output_stream.flags() & std::ios::hex) {
     for(int i = 0; i < comp_count; i++)
       output_stream << std::setw(2) << (int)round(data[i]*255);

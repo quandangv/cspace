@@ -1,16 +1,17 @@
 #include "interface.hpp"
+#include "logger.hpp"
 
 #include <iomanip>
 #include <iostream>
 
-#include "format.hpp"
 #include "setting.hpp"
 #include "token_iterator.hpp"
 #include "parse.hpp"
 
 GLOBAL_NAMESPACE
 
-constexpr char scope[] = "interface";
+DEFINE_ERROR(setting_error);
+constexpr char scope[] = "setting";
 
 struct : short_setting {
   string long_name() const { return "help"; }
@@ -56,7 +57,7 @@ struct : eater_setting<short_setting> {
     if (int val; parse(s.data(), val)) {
       intf.output_stream << std::setprecision(val);
     } else 
-      throw interface_error("precision: Unknown term argument: " + s);
+      throw setting_error("precision: Unknown term argument: " + s);
   }
 } _precision;
 
@@ -80,7 +81,7 @@ struct : eater_setting<basic_setting> {
     } else if (s == "!")
       intf.use_hex(!intf.use_hex());
     else
-      throw interface_error("hex: Unknown term argument: " + s);
+      throw setting_error("hex: Unknown term argument: " + s);
   }
 } _hex;
 

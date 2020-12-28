@@ -4,8 +4,6 @@
 #include <tuple>
 #include <vector>
 
-#include "option.hpp"
-
 using namespace std;
 using namespace cspace;
 

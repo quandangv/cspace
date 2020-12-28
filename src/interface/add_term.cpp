@@ -1,4 +1,5 @@
 #include "interface.hpp"
+#include "logger.hpp"
 
 #include <iomanip>
 
@@ -6,6 +7,7 @@
 
 GLOBAL_NAMESPACE
 
+DEFINE_ERROR(interface_error)
 constexpr char scope[] = "interface";
 
 // Process the given term
@@ -32,7 +34,7 @@ std::string interface::add_term(string&& term) {
     unexpected_comma(term);
   } else if (parse(term.c_str(), data[data_count])) {
     // The term contains numerical data
-    if (++data_count >= colorspaces::component_count(from)) {
+    if (++data_count >= component_count(from)) {
       if (comma) {
         // The alpha component is present, add another component before we start the operation
         if (alpha) throw new interface_error("Add-term: Enough components have been received, excess comma at: " + term);
