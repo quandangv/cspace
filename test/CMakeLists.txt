@@ -34,8 +34,8 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
 
 # }}}
 
-# Compile all unit tests with 'make all_unit_tests'
-add_custom_target(all_unit_tests
+# Compile all unit tests with 'make cspace_tests'
+add_custom_target(cspace_tests
                   COMMENT "Building all unit test")
 
 function(add_unit_test source_file)
@@ -48,7 +48,7 @@ function(add_unit_test source_file)
   target_link_libraries(${name} space gmock_main)
   add_test(NAME ${name} COMMAND ${name})
 
-  add_dependencies(all_unit_tests ${name})
+  add_dependencies(cspace_tests ${name})
 endfunction()
 
 add_unit_test(conversion)
@@ -58,5 +58,5 @@ add_unit_test(interface)
 # Run make check to build and run all unit tests
 add_custom_target(check
                   COMMAND GTEST_COLOR=1 ctest --output-on-failure
-                  DEPENDS all_unit_tests)
+                  DEPENDS cspace_tests)
 
