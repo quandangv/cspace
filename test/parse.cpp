@@ -1,7 +1,6 @@
 #include "parse.hpp"
 #include "test.h"
 
-#include <tuple>
 #include <vector>
 
 using namespace std;
@@ -9,8 +8,8 @@ using namespace cspace;
 
 struct TestCompoments {
   bool has_alpha;
-  int divider;
-  vector<component> comp;
+  double divider;
+  vector<unsigned int> comp;
 };
 using TestSet = pair<string, TestCompoments>;
 
@@ -30,14 +29,14 @@ vector<TestSet> parse_tests = {
 INSTANTIATE_TEST_SUITE_P(Parse, GetTest, ::testing::ValuesIn(parse_tests));
 
 TEST_P(GetTest, parse_code) {
-  component comp[4];
+  double comp[4];
   bool has_alpha;
   auto expected = GetParam().second;
-  auto divider = parse_code(GetParam().first, &comp[0], has_alpha);
-  EXPECT_EQ(divider, expected.divider);
-  if (divider) {
+  auto success = parse_code(GetParam().first, &comp[0], has_alpha);
+  EXPECT_EQ(success, expected.divider != 0);
+  if (success) {
     for (int i = 0; i < expected.comp.size(); i++)
-      EXPECT_EQ(expected.comp[i], comp[i]);
+      EXPECT_EQ(expected.comp[i] / expected.divider, comp[i]);
     EXPECT_EQ(expected.has_alpha, has_alpha);
   }
 }

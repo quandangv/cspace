@@ -13,7 +13,6 @@ constexpr char scope[] = "setting";
 
 bool basic_setting::on_long_switch(const string& name, interface& intf) const {
   if (name == long_name()) {
-    logger::debug<scope>("Name: " + name + ", Term name: " + long_name());
     action(intf);
     return true;
   }
@@ -25,9 +24,8 @@ void basic_setting::print_help() const {
 }
 
 void short_setting::on_short_switches(const string& switches, interface& intf) const {
-  if (switches.find(short_name()) != string::npos) {
+  if (switches.find(short_name()) != string::npos)
     action(intf);
-  }
 }
 
 void short_setting::print_help() const {

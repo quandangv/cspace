@@ -13,6 +13,7 @@ namespace cspace {
     char op{0};
     double value{std::nan("")};
 
+    mod() {}
     mod(int component, char op, double value) : component(component), op(op), value(value) {}
     mod(token_iterator&, colorspace);
 
@@ -26,14 +27,13 @@ namespace cspace {
     std::string separator{" "};
     std::vector<mod> modifications{};
     bool alpha_first{true};
-    std::stringstream output_stream;
+    mutable std::stringstream output_stream;
 
     processor();
 
     bool use_hex();
     bool use_hex(bool);
     std::string operate(double* data, bool have_alpha, colorspace from);
-    std::string get_state();
-    void clear();
+    std::string print(double*data, int count) const;
   };
 }

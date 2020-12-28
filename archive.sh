@@ -1,11 +1,8 @@
 proj_name=cspace
 
-[[ -z "$1" ]] && {
-  echo "Please pass version as argument"
-  exit 1
-}
-
-path=./build/$proj_name-$1
+# retrieve the project version from CMakeLists.txt
+version=$(grep -oP 'project\(.*? VERSION \K[0-9.]+' CMakeLists.txt)
+path=./build/$proj_name-$version
 git archive --prefix $proj_name/ --output $path.tar --format tar HEAD &&
 git archive --prefix $proj_name/ --output $path.tar.gz --format tar.gz HEAD &&{
   echo "Archive generated to $path"

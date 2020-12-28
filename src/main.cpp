@@ -15,10 +15,10 @@ int main(int argc, char** argv) {
   auto read_term = [&]()->string {
     // First, read from the arguments
     static int argi = 1;
-    if (argi <= argc) {
-      if (argi < argc)
-        return string(argv[argi++]);
-      else if (!intf.stay) {
+    if (argi < argc)
+      return string(argv[argi++]);
+    else if (argi == argc) {
+      if (!intf.stay) {
         // If we aren't told to stay, quit when the argument runs out.
         intf.quit = true;
         return "";

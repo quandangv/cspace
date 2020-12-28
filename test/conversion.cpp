@@ -16,12 +16,7 @@ struct color {
 };
 
 struct TestSet {
-  color rgb;
-  color cmyk;
-  color hsl;
-  color hsv;
-  color xyz;
-  color cielab;
+  color rgb, cmyk, hsl, hsv, xyz, cielab;
 };
 
 class GetTest : public ::testing::Test, public ::testing::WithParamInterface<TestSet> {};
@@ -35,15 +30,22 @@ vector<TestSet> conversion_tests{
 };
 INSTANTIATE_TEST_SUITE_P(Conversion, GetTest, ::testing::ValuesIn(conversion_tests));
 
+string to_string(const double* arr, int count) {
+  stringstream result;
+  result  << arr[0];
+  for(int i = 1; i < count; i++)
+    result << ' ' << arr[i];
+  return result.str();
+}
+
 bool expect_near(const double* output, const double* expected, const double* input, const double* rgb, string from, string to, string msg = "") {
   auto result = true;
-  auto in_space = stospace(from.c_str());
   auto out_space = stospace(to.c_str());
   for(int i = 0; i < component_count(out_space); i++)
     if (std::abs(output[i] - expected[i]) > tolerance)
       result = false;
 
-  EXPECT_TRUE(result) << "Conversion from " << from << " to " << to << " is wrong, input: " << to_string(input, in_space) << "\nOutput: " << to_string(output, out_space) << "\nExpected: " << to_string(expected, out_space) << "\nOriginal RGB: " << to_string(rgb, 3) << endl << msg << endl;
+  EXPECT_TRUE(result) << "Conversion from " << from << " to " << to << " is wrong, input: " << to_string(input, stospace(from.c_str())) << "\nOutput: " << to_string(output, out_space) << "\nExpected: " << to_string(expected, out_space) << "\nOriginal RGB: " << to_string(rgb, 3) << endl << msg << endl;
   return result;
 }
 

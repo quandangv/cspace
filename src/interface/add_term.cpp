@@ -28,8 +28,7 @@ std::string interface::add_term(string&& term) {
   }
 
   if (eater != nullptr) {
-    // Feed term eater
-    // They are terms that takes in additional arguments
+    // Feed term eater, which are terms that takes in additional arguments
     feed_term_eater(move(term));
     unexpected_comma(term);
   } else if (parse(term.c_str(), data[data_count])) {
@@ -38,8 +37,7 @@ std::string interface::add_term(string&& term) {
       if (comma) {
         // The alpha component is present, add another component before we start the operation
         if (alpha) throw new interface_error("Add-term: Enough components have been received, excess comma at: " + term);
-        else
-          alpha = true;
+        alpha = true;
       } else
         // Got enough components, start the operation
         return pop_data(from);
@@ -49,11 +47,11 @@ std::string interface::add_term(string&& term) {
     // Processing the switches, no commas expected here
     unexpected_comma(term);
     
-    if (term == "--help" || term == "-h") {
+    if (term == "--help" || term == "-h")
       print_help();
-    } else {
+    else {
       if (!process_long_switch(term)) {
-        // The term isn't a long switch, it's one of the special switches
+        // The special switches are differentiated by their last character
         auto control_char = term.back();
         term.pop_back();
         switch(control_char) {
@@ -72,17 +70,10 @@ std::string interface::add_term(string&& term) {
           break;
         case 'h':
         case 'H':
-          // This is input in the hexedecimal format
-          {
-            // Replace data with components from the color code and start conversion
-            component comp[4];
-            auto divider = parse_code(term, &comp[0], alpha);
-            if (divider != 0) {
-              makesure_empty();
-              for(int i = 0; i < 4; i++)
-                data[i] = static_cast<double>(comp[i]) / divider;
-              return pop_data(colorspaces::rgb);
-            }
+          // This input is in the hexedecimal format
+          makesure_empty();
+          if (parse_code(term, &data[0], alpha)) {
+            return pop_data(colorspaces::rgb);
           }
           // If the hexedecimal parsing failed, fall through
         default:

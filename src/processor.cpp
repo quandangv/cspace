@@ -28,27 +28,22 @@ mod::mod(token_iterator& it, colorspace space) {
   // The argument for this setting follows the format: <component> <operator> <value>, ...
   // First token is the component
   if (!it.next_token_base<std::isalnum>()) {
-    component = 0;
-    op = 0;
-    value = 0;
+    mod();
     return;
   }
   component = parse_component(it.token().data(), space);
-  logger::debug<scope>("Mod component: '" + it.token() + "', value: " + to_string(component));
 
   // Next is the operator, which takes a single character
   if (!it.next_token_base<std::ispunct>() || it.token().empty())
-    logger::warn("Interface-mod: Missing component operator and value in: " + it.input);
+    throw processor_error("Mod: Missing component operator and value in: " + it.input);
   op = it.token()[0];
-  logger::debug<scope>("Mod operator: " + it.token());
 
   // Last is the value
   if (!it.next_token() || it.token().empty())
-    logger::warn("Interface-mod: Missing value in: " + it.input);
+    throw processor_error("Mod: Missing value in: " + it.input);
   auto token = it.token();
-  if (token.back() == ',') {
+  if (token.back() == ',')
     token.pop_back();
-  }
   if (!parse(token.data(), value))
     throw processor_error("mod: Can't parse numerical value: " + it.token());
 }
@@ -58,7 +53,6 @@ processor::processor() {
 }
 
 string processor::operate(double* data, bool have_alpha, colorspace from) {
-  output_stream.str("");
   auto data_ptr = &data[(int)(have_alpha && alpha_first)];
   if (!modifications.empty()) {
     // Convert to the intermediate color space and do the modifications
@@ -74,13 +68,19 @@ string processor::operate(double* data, bool have_alpha, colorspace from) {
   // Print data to output stream
   auto comp_count = component_count(target) + (int)have_alpha;
   if (output_stream.flags() & std::ios::hex) {
+    output_stream.str("");
     for(int i = 0; i < comp_count; i++)
       output_stream << std::setw(2) << (int)round(data[i]*255);
-  } else {
-    output_stream << data[0];
-    for(int i = 1; i < comp_count; i++)
-      output_stream << separator << data[i];
-  }
+    return output_stream.str();
+  } else
+    return print(data, comp_count);
+}
+
+string processor::print(double* data, int count) const {
+  output_stream.str("");
+  output_stream << data[0];
+  for(int i = 1; i < count; i++)
+    output_stream << separator << data[i];
   return output_stream.str();
 }
 
@@ -97,16 +97,6 @@ bool processor::use_hex(bool value) {
 
 bool processor::use_hex() {
   return output_stream.flags() & std::ios::hex;
-}
-
-// Returns the state of the processor
-string processor::get_state() {
-  std::stringstream output;
-  return output.str();
-}
-
-// Clears the state of the processor
-void processor::clear() {
 }
 
 GLOBAL_NAMESPACE_END

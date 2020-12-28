@@ -70,15 +70,9 @@ colorspace get_mask(colorspace c) {
 // All the direct conversions goes here
 void direct(double* value, colorspace from, colorspace to) {
   switch (from << 8 | to) {
-  #define CASE_BASE(a, b, method) \
-  case a << 8 | b: \
-    method(value, value); \
-    logger::debug<scope>("Direct conversion: "#a" to "#b); \
-    break;
-  #define CASE(a, b) \
-    CASE_BASE(a, b, a##_##b) CASE_BASE(b, a, b##_##a)
-  #define AB_CH(_ab, _ch) \
-    CASE_BASE(_ab, _ch, ab_ch) CASE_BASE(_ch, _ab, ch_ab)
+  #define CASE_BASE(a, b, method) case a << 8 | b: method(value, value); break;
+  #define CASE(a, b) CASE_BASE(a, b, a##_##b) CASE_BASE(b, a, b##_##a)
+  #define AB_CH(_ab, _ch) CASE_BASE(_ab, _ch, ab_ch) CASE_BASE(_ch, _ab, ch_ab)
     CASE(rgb, xyz)
     CASE(rgb, hsl)
     CASE(rgb, hsv)
