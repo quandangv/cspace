@@ -1,4 +1,4 @@
-#include "parse.hpp"
+#include "colorspace.hpp"
 #include "test.h"
 
 #include <vector>
@@ -28,11 +28,11 @@ vector<TestSet> parse_tests = {
 };
 INSTANTIATE_TEST_SUITE_P(Parse, GetTest, ::testing::ValuesIn(parse_tests));
 
-TEST_P(GetTest, parse_code) {
+TEST_P(GetTest, parse_hex) {
   double comp[4];
   bool has_alpha;
   auto expected = GetParam().second;
-  auto success = parse_code(GetParam().first, &comp[0], has_alpha);
+  auto success = parse_hex(GetParam().first, &comp[0], has_alpha);
   EXPECT_EQ(success, expected.divider != 0);
   if (success) {
     for (int i = 0; i < expected.comp.size(); i++)

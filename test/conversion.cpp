@@ -4,7 +4,7 @@
 #include <tuple>
 #include <vector>
 
-#include "parse.hpp"
+#include "colorspace.hpp"
 
 using namespace std;
 using namespace cspace;

@@ -16,6 +16,7 @@ namespace cspace {
     mod() {}
     mod(int component, char op, double value) : component(component), op(op), value(value) {}
     mod(token_iterator&, colorspace);
+    mod(std::string&&, colorspace);
 
     void apply(double* target) const;
   };
@@ -23,7 +24,7 @@ namespace cspace {
   class processor {
   public:
     colorspace target{colorspaces::rgb};
-    colorspace inter{colorspaces::jzazbz};
+    colorspace inter{colorspaces::cielab};
     std::string separator{" "};
     std::vector<mod> modifications{};
     bool alpha_first{true};

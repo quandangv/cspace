@@ -50,6 +50,12 @@ std::string interface::add_term(string&& term) {
     if (term == "--help" || term == "-h")
       print_help();
     else {
+      if (term.front() == '#') {
+        makesure_empty();
+        term.erase(0, 1);
+        if (parse_hex(term, &data[0], alpha))
+          return pop_data(colorspaces::rgb);
+      }
       if (!process_long_switch(term)) {
         // The special switches are differentiated by their last character
         auto control_char = term.back();
@@ -72,10 +78,9 @@ std::string interface::add_term(string&& term) {
         case 'H':
           // This input is in the hexedecimal format
           makesure_empty();
-          if (parse_code(term, &data[0], alpha)) {
+          if (parse_hex(term, &data[0], alpha))
             return pop_data(colorspaces::rgb);
-          }
-          // If the hexedecimal parsing failed, fall through
+          // If the hexedecimal parsing fail, fall through
         default:
           term.push_back(control_char);
           logger::error("Parsing: Unknown term '" + term + "'");

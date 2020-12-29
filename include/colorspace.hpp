@@ -8,6 +8,8 @@ namespace cspace {
   std::string to_string(colorspace);
   colorspace stospace(const std::string&);
   std::string list_colorspaces(const std::string& separator);
+  bool parse_hex(const std::string& value, double* components, bool& have_alpha);
+
 
   void convert(double* value, colorspace from, colorspace to);
   int component_count(colorspace);

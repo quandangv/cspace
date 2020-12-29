@@ -19,24 +19,25 @@ void mod::apply(double* data) const {
   case '*': target *= value; break;
   case '/': target /= value; break;
   case '=': target = value; break;
-  default: throw processor_error("Mod: Unknown operator: " + string{op});
+  default: throw processor_error("Mod: Unknown operator: " + std::to_string(op));
   }
 }
 
-mod::mod(token_iterator& it, colorspace space) {
+void construct_mod(mod& m, token_iterator& it, colorspace space) {
   logger::debug<scope>("Construct mod: " + it.input);
   // The argument for this setting follows the format: <component> <operator> <value>, ...
   // First token is the component
   if (!it.next_token_base<std::isalnum>()) {
-    mod();
+    m.component = m.op = m.value = 0;
     return;
   }
-  component = parse_component(it.token().data(), space);
+  m.component = parse_component(it.token().data(), space);
+  logger::debug<scope>("Mod comp: " + it.token());
 
   // Next is the operator, which takes a single character
   if (!it.next_token_base<std::ispunct>() || it.token().empty())
     throw processor_error("Mod: Missing component operator and value in: " + it.input);
-  op = it.token()[0];
+  m.op = it.token()[0];
 
   // Last is the value
   if (!it.next_token() || it.token().empty())
@@ -44,8 +45,17 @@ mod::mod(token_iterator& it, colorspace space) {
   auto token = it.token();
   if (token.back() == ',')
     token.pop_back();
-  if (!parse(token.data(), value))
+  if (!parse(token.data(), m.value))
     throw processor_error("mod: Can't parse numerical value: " + it.token());
+}
+
+mod::mod(string&& s, colorspace space) {
+  token_iterator it(move(s));
+  construct_mod(*this, it, space);
+}
+
+mod::mod(token_iterator& it, colorspace space) {
+  construct_mod(*this, it, space);
 }
 
 processor::processor() {
@@ -57,7 +67,7 @@ string processor::operate(double* data, bool have_alpha, colorspace from) {
   if (!modifications.empty()) {
     // Convert to the intermediate color space and do the modifications
     convert(data_ptr, from, inter);
-    for(auto mod : modifications)
+    for(auto& mod : modifications)
       mod.apply(data_ptr);
     convert(data_ptr, inter, target);
   } else
