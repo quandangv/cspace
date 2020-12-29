@@ -62,21 +62,45 @@ processor::processor() {
   use_hex(true);
 }
 
+colorspace processor::target() const {
+  return m_target;
+}
+
+colorspace processor::target(colorspace s) {
+  if (s == m_target) return m_target;
+  // If any output color space is specified, disable hex mode, which is only meant to be used in RGB color space
+  use_hex(false);
+  return m_target = s;
+}
+
+string processor::operate_hex(const string& hex) {
+  double data[4];
+  bool alpha;
+  if (parse_hex(hex, &data[0], alpha)) {
+    return operate(&data[0], alpha, colorspaces::rgb);
+  } else
+    return "";
+}
+
+mod& processor::add_modification(string&& s) {
+  return modifications.emplace_back(move(s), inter);
+}
+
 string processor::operate(double* data, bool have_alpha, colorspace from) {
-  auto data_ptr = &data[(int)(have_alpha && alpha_first)];
+  auto data_ptr = data + (int)(have_alpha && alpha_first);
   if (!modifications.empty()) {
     // Convert to the intermediate color space and do the modifications
     convert(data_ptr, from, inter);
     for(auto& mod : modifications)
       mod.apply(data_ptr);
-    convert(data_ptr, inter, target);
+    convert(data_ptr, inter, m_target);
   } else
     // Convert to the destination color space directly
-    convert(data_ptr, from, target);
-  clamp(data_ptr, target);
+    convert(data_ptr, from, m_target);
+  clamp(data_ptr, m_target);
   
   // Print data to output stream
-  auto comp_count = component_count(target) + (int)have_alpha;
+  auto comp_count = component_count(m_target) + (int)have_alpha;
   if (output_stream.flags() & std::ios::hex) {
     output_stream.str("");
     for(int i = 0; i < comp_count; i++)
@@ -98,7 +122,7 @@ string processor::print(double* data, int count) const {
 bool processor::use_hex(bool value) {
   if (value) {
     output_stream << std::uppercase << std::setfill('0') << std::hex;
-    target = colorspaces::rgb;
+    m_target = colorspaces::rgb;
   } else {
     output_stream << std::dec << std::setfill(' ');
   }

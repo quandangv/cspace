@@ -65,11 +65,7 @@ std::string interface::add_term(string&& term) {
           from = stospace(term);
           break;
         case '!':
-          // If any output color space is specified, disable hex output mode
-          // It's only meant to output in RGB color space
-          if (use_hex())
-            use_hex(false);
-          target = stospace(move(term));
+          target(stospace(move(term)));
           break;
         case '.':
           process_short_switches(term);

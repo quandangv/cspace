@@ -69,6 +69,7 @@ endfunction()
 add_lib_test(parse)
 add_lib_test(conversion)
 add_lib_test(interface)
+add_lib_test(processor)
 
 # Run make check to build and run all unit tests
 add_custom_target(check

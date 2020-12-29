@@ -31,8 +31,8 @@ struct : basic_setting {
   string description() const { return "Swap 'from' and 'to' color spaces"; }
   void action(interface& intf) const {
     auto tmp = intf.from;
-    intf.from = intf.target;
-    intf.target = tmp;
+    intf.from = intf.target();
+    intf.target(tmp);
   }
 } _swap;
 

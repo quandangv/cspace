@@ -22,8 +22,8 @@ namespace cspace {
   };
 
   class processor {
+    colorspace m_target{colorspaces::rgb};
   public:
-    colorspace target{colorspaces::rgb};
     colorspace inter{colorspaces::cielab};
     std::string separator{" "};
     std::vector<mod> modifications{};
@@ -34,6 +34,10 @@ namespace cspace {
 
     bool use_hex();
     bool use_hex(bool);
+    colorspace target() const;
+    colorspace target(colorspace);
+    mod& add_modification(std::string&&);
+    std::string operate_hex(const std::string&);
     std::string operate(double* data, bool have_alpha, colorspace from);
     std::string print(double*data, int count) const;
   };
