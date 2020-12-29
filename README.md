@@ -7,9 +7,9 @@ Also included is the _color modification_ utility that allow you to quickly chan
 If you come just to find the code for color conversion, they're in `src/conversion`. Each file in the folder contains the conversion functions for the corresponding color space. The files are have no external dependency and can be easily appropriated for your code.
 
 ## Building the project
-### Using build.sh
+#### Using build.sh
 Run `./build.sh -A` to build and install the project with default settings. To also build and run tests, use `./build.sh -tA`.
-### Manually
+#### Manually
 Cspace is installed using CMake by runnning
 ```
 mkdir -p build && cd build
@@ -22,11 +22,11 @@ sudo make install
 Here are some example commands using cspace:
 - Convert `#FF00FF` to CIELab color space
 
-  `cspace cielab! FF00FFh`
+  `cspace cielab! '#FF00FF'`
   
 - Increase color brightness 1.5 times
 
-  `cspace mod: 'brightness * 2' FF0000h`
+  `cspace mod: 'brightness * 2' '#FF0000'`
   
 For more information, view the help text by running `cspace --help`
 
