@@ -13,11 +13,41 @@ GLOBAL_NAMESPACE
 DEFINE_ERROR(setting_error);
 constexpr char scope[] = "setting";
 
-struct : short_setting {
-  string long_name() const { return "help"; }
-  char short_name() const { return 'h'; }
-  string description() const { return "Show this help message"; }
-  void action(interface& intf) const { intf.print_help(); }
+void print_all_help() {
+  std::cout << "Converts colors from one color space to another.\nUsage: cspace [TERM] [TERM] [DATA] ...\n  Data are floating-point numbers that will be the input for the conversions\n  Terms are one of the following:\n";
+  constexpr int term_indent = 26, example_indent = 39;
+  #define MY_COUT(size) std::cout << std::endl << std::setw(size) << std::left 
+  MY_COUT(term_indent) << "  {colorspace}:" << "Convert from {colorspace}) (RGB by default)";
+  MY_COUT(term_indent) << "  {colorspace}!" << "Convert to {colorspace} (RGB by default)";
+  for(auto& s : all_settings) {
+    s->print_help();
+  }
+  std::cout << "\n\n  Terms only affect the conversions that take place after it\n  Passing '!' to on/off terms would toggle them\n  Supported colorspaces are:\n    " << list_colorspaces(", ") << std::endl;
+  std::cout << "\nExample commands:\n";
+  MY_COUT(example_indent) << "  cspace hsv! '#FF0000'" << "Convert #FF0000 to HSV";
+  MY_COUT(example_indent) << "  cspace hsv! FF0000h" << "Another way to use hexedecimal code";
+  MY_COUT(example_indent) << "  cspace hsl! 1 0 0" << "Convert #FF0000 to HSL";
+  MY_COUT(example_indent) << "  cspace hsl! 1, 0, 0" << "Comma-separated RGB to HSL";
+  MY_COUT(example_indent) << "  cspace cielab! hsl: 180 0.5 0.5" << "From HSL to CIELab";
+  MY_COUT(example_indent) << "  cspace p. 9 CIELab! 0AFh" << "#00AAFF to Lab with 9 decimal places";
+  MY_COUT(example_indent) << "  cspace p. 9 CIELab! FFFF0000FFFFh" << "Convert 16-bit colors";
+  MY_COUT(example_indent) << "  cspace hsv! 80FF0000h" << "#80FF0000 in ARGB format to HSV";
+  MY_COUT(example_indent) << "  cspace hsv! 0.5, 1, 0, 0" << "Comma-separated ARGB color to HSV";
+  MY_COUT(example_indent) << "  cspace HSV! xxxa! FF000080h" << "#FF000080 in RGBA format to HSV";
+  MY_COUT(example_indent) << "  cspace ps. 9" << "Set percision to 9 and wait for input";
+  MY_COUT(example_indent) << "  cspace mod: J *1.5 hex: on FF0022h" << "Multiply lightness of #FF0022 by 1.5";
+  MY_COUT(example_indent) << "" << "J is the component for lightness in Jzazbz";
+  std::cout << std::endl;
+  #undef MY_COUT
+}
+
+struct : setting {
+  bool on_long_switch(const string& s, interface&) const {
+    if (s == "help" || s == "--help" || s == "-h")
+      print_all_help();
+    else return false;
+    return true;
+  }
 } _help;
 
 struct : basic_setting {

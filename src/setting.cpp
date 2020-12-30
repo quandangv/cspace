@@ -8,7 +8,7 @@
 
 GLOBAL_NAMESPACE
 
-constexpr int term_indent = 24;
+constexpr int term_indent = 26;
 constexpr char scope[] = "setting";
 
 bool basic_setting::on_long_switch(const string& name, interface& intf) const {

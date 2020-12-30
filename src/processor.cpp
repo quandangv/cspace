@@ -52,6 +52,8 @@ void construct_mod(mod& m, token_iterator& it, colorspace space) {
 mod::mod(string&& s, colorspace space) {
   token_iterator it(move(s));
   construct_mod(*this, it, space);
+  if (it.next_token())
+    throw processor_error("Mod: Excess tokens in initialization string: " + it.input);
 }
 
 mod::mod(token_iterator& it, colorspace space) {
@@ -83,7 +85,12 @@ string processor::operate_hex(const string& hex) {
 }
 
 mod& processor::add_modification(string&& s) {
-  return modifications.emplace_back(move(s), inter);
+  token_iterator it(move(s));
+  mod* result;
+  do {
+    result = &modifications.emplace_back(it, inter);
+  } while(it.have_token());
+  return *result;
 }
 
 string processor::operate(double* data, bool have_alpha, colorspace from) {
@@ -103,6 +110,7 @@ string processor::operate(double* data, bool have_alpha, colorspace from) {
   auto comp_count = component_count(m_target) + (int)have_alpha;
   if (output_stream.flags() & std::ios::hex) {
     output_stream.str("");
+    output_stream << '#';
     for(int i = 0; i < comp_count; i++)
       output_stream << std::setw(2) << (int)round(data[i]*255);
     return output_stream.str();
