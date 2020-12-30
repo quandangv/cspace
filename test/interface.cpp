@@ -14,12 +14,12 @@ struct TestSet {
   void check(interface& item) const {
     item.separator = "-";
     token_iterator it;
-    it.set_input(terms_str);
+    it.set_input(string(terms_str));
     
     // feed terms to the interface and check the result
     string real_result = "";
     for(; it.next_token();) {
-      auto r = item.add_term(string(it.token()));
+      auto r = item.add_term(it.token().to_string());
       if (!r.empty())
         real_result += r + " ";
     }

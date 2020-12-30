@@ -46,7 +46,7 @@ std::string interface::add_term(string&& term) {
     // Feed term eater, which are terms that takes in additional arguments
     feed_term_eater(move(term));
     unexpected_comma(term);
-  } else if (double value; parse(term.data(), value)) {
+  } else if (double value; parse(term, value)) {
     return add_data(value);
   } else {
     // Processing the switches, no commas expected here

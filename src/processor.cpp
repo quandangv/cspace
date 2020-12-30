@@ -31,22 +31,21 @@ void construct_mod(mod& m, token_iterator& it, colorspace space) {
     m.component = m.op = m.value = 0;
     return;
   }
-  m.component = parse_component(it.token().data(), space);
-  logger::debug<scope>("Mod comp: " + it.token());
+  m.component = parse_component(it.token(), space);
 
   // Next is the operator, which takes a single character
   if (!it.next_token_base<std::ispunct>() || it.token().empty())
     throw processor_error("Mod: Missing component operator and value in: " + it.input);
-  m.op = it.token()[0];
+  m.op = it.token().front();
 
   // Last is the value
   if (!it.next_token() || it.token().empty())
     throw processor_error("Mod: Missing value in: " + it.input);
-  auto token = it.token();
+  auto& token = it.token();
   if (token.back() == ',')
-    token.pop_back();
-  if (!parse(token.data(), m.value))
-    throw processor_error("mod: Can't parse numerical value: " + it.token());
+    token.erase_back();
+  if (!parse(token, m.value))
+    throw processor_error("mod: Can't parse numerical value: " + it.token().to_string());
 }
 
 mod::mod(string&& s, colorspace space) {

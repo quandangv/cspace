@@ -84,7 +84,7 @@ struct : eater_setting<short_setting> {
   string arguments() const { return "<num>"; }
   string description() const { return "Set output precision to <num> decimal places"; }
   void eat(string&& s, interface& intf) const {
-    if (int val; parse(s.data(), val)) {
+    if (int val; parse(tstring(s), val)) {
       intf.output_stream << std::setprecision(val);
     } else 
       throw setting_error("precision: Unknown term argument: " + s);
@@ -106,7 +106,7 @@ struct : eater_setting<basic_setting> {
   string arguments() const { return "on/off/!"; }
   string description() const { return "Print output colors int RGB hexedecimal code"; }
   void eat(string&& s, interface& intf) const {
-    if (bool val; parse(s.data(), val)) {
+    if (bool val; parse(s, val)) {
       intf.use_hex(val);
     } else if (s == "!")
       intf.use_hex(!intf.use_hex());

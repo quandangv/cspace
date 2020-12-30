@@ -10,18 +10,18 @@ DEFINE_ERROR(parse_error)
 
 using namespace std;
 
-bool parse(const char* str, double& result) {
+bool parse(const tstring& str, double& result) {
   int len;
-  return sscanf(str, "%lf%n", &result, &len) == 1 && str[len] == 0;
+  return sscanf(str.begin(), "%lf%n", &result, &len) == 1 && len == str.size();
 }
 
-bool parse(const char* str, int& result) {
+bool parse(const tstring& str, int& result) {
   int len;
-  return sscanf(str, "%d%n", &result, &len) == 1 && str[len] == 0;
+  return sscanf(str.begin(), "%d%n", &result, &len) == 1 && len == str.size();
 }
 
-bool parse(const char* str, bool& result) {
-  #define CMP(a) strcasecmp(str, #a) == 0
+bool parse(const tstring& str, bool& result) {
+  #define CMP(a) strncasecmp(str.begin(), #a, str.size()) == 0
   if (CMP(on) || CMP(true))
     result = true;
   else if (CMP(off) || CMP(false))

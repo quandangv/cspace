@@ -209,8 +209,8 @@ void clamp(double* value, colorspace space) {
 }
 
 // Returns the component index from the component name and the color space
-int parse_component(const char* name, colorspace space) {
-  #define CASE(word, val) if(strcasecmp(name, #word) == 0) return val;
+int parse_component(const tstring& name, colorspace space) {
+  #define CASE(word, val) if(strncasecmp(name.begin(), #word, name.size()) == 0) return val;
   if (space == rgb) {
     CASE(red, 0)
     CASE(green, 1)
@@ -267,7 +267,7 @@ int parse_component(const char* name, colorspace space) {
     CASE(value, 2)
     CASE(v, 2)
   }
-  throw colorspace_error(to_string(space) + " colorspace: Unknown component: " + name);
+  throw colorspace_error(to_string(space) + " colorspace: Unknown component: " + name.to_string());
   #undef CASE
 }
 

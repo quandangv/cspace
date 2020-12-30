@@ -1,9 +1,10 @@
 #pragma once
 
 #include "colorspace.hpp"
+#include "tstring.hpp"
 
 namespace cspace {
-  bool parse(const char*, double&);
-  bool parse(const char*, int&);
-  bool parse(const char*, bool&);
+  bool parse(const tstring&, double&);
+  bool parse(const tstring&, int&);
+  bool parse(const tstring&, bool&);
 }

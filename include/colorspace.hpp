@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "tstring.hpp"
+
 namespace cspace {
   using colorspace = unsigned char;
 
@@ -14,7 +16,7 @@ namespace cspace {
   void convert(double* value, colorspace from, colorspace to);
   int component_count(colorspace);
   void clamp(double* value, colorspace);
-  int parse_component(const char* name, colorspace);
+  int parse_component(const tstring& name, colorspace);
 
   namespace colorspaces {
     // All colorspaces are organized to a tree

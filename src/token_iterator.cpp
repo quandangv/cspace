@@ -3,8 +3,8 @@
 #include <string>
 
 // Set the string from which to extract tokens and the position to start extracting
-token_iterator& token_iterator::set_input(string inp, size_t pos) {
-  input = inp;
+token_iterator& token_iterator::set_input(string&& inp, size_t pos) {
+  input = move(inp);
   position = pos;
   return *this;
 }
@@ -31,6 +31,6 @@ token_iterator& token_iterator::return_token(size_t from) {
   return *this;
 }
 
-const string& token_iterator::token() const {
+tstring& token_iterator::token() {
   return m_token;
 }
