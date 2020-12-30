@@ -16,7 +16,7 @@ using namespace colorspaces;
 // alpha_first informs whether the color code is in the [A]RGB or RGB[A] format
 bool parse_hex(const string& value, double* comps, bool& have_alpha) {
   bool error = false;
-  auto str = value.c_str();
+  auto str = value.data();
 
   // This parses the base-16 digit at the given index
   auto hex = [&] (int index)->unsigned char {
@@ -85,7 +85,7 @@ bool parse_hex(const string& value, double* comps, bool& have_alpha) {
 
 // Converts string to colorspace
 colorspace stospace(const string& value) {
-  #define CASE(c) if (strcasecmp(value.c_str(), #c) == 0) return c;
+  #define CASE(c) if (strncasecmp(value.c_str(), #c, value.size()) == 0) return c;
   APPLY_COLORSPACES
   #undef CASE
   throw colorspace_error("Unknown colorspace: "s + value);
