@@ -4,7 +4,6 @@
 #include <sstream>
 #include <cmath>
 
-#include "token_iterator.hpp"
 #include "colorspace.hpp"
 
 namespace cspace {
@@ -15,7 +14,6 @@ namespace cspace {
 
     mod() {}
     mod(int component, char op, double value) : component(component), op(op), value(value) {}
-    mod(token_iterator&, colorspace);
     mod(std::string&&, colorspace);
 
     void apply(double* target) const;
@@ -37,7 +35,7 @@ namespace cspace {
     colorspace target() const;
     colorspace target(colorspace);
     mod& add_modification(std::string&&);
-    std::string operate_hex(const std::string&);
+    std::string operate(const std::string&);
     std::string operate(double* data, bool have_alpha, colorspace from);
     std::string print(double*data, int count) const;
   };

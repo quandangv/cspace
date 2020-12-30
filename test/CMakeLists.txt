@@ -66,9 +66,9 @@ function(add_lib_test source_file)
   add_dependencies(cspace_libtests ${name})
 endfunction()
 
-add_lib_test(parse)
+add_unit_test(parse)
 add_lib_test(conversion)
-add_lib_test(interface)
+add_unit_test(interface)
 add_lib_test(processor)
 
 # Run make check to build and run all unit tests

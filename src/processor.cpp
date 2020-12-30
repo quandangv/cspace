@@ -4,6 +4,7 @@
 #include <iomanip>
 
 #include "parse.hpp"
+#include "token_iterator.hpp"
 
 GLOBAL_NAMESPACE
 
@@ -19,7 +20,7 @@ void mod::apply(double* data) const {
   case '*': target *= value; break;
   case '/': target /= value; break;
   case '=': target = value; break;
-  default: throw processor_error("Mod: Unknown operator: " + std::to_string(op));
+  default: throw processor_error("Mod: Unknown operator: " + string{op});
   }
 }
 
@@ -55,10 +56,6 @@ mod::mod(string&& s, colorspace space) {
     throw processor_error("Mod: Excess tokens in initialization string: " + it.input);
 }
 
-mod::mod(token_iterator& it, colorspace space) {
-  construct_mod(*this, it, space);
-}
-
 processor::processor() {
   use_hex(true);
 }
@@ -74,20 +71,53 @@ colorspace processor::target(colorspace s) {
   return m_target = s;
 }
 
-string processor::operate_hex(const string& hex) {
-  double data[4];
+string processor::operate(const string& str) {
+  double data[5];
   bool alpha;
-  if (parse_hex(hex, &data[0], alpha)) {
-    return operate(&data[0], alpha, colorspaces::rgb);
-  } else
-    return "";
+  colorspace space;
+  tstring s(str);
+  if (s[0] == '#') {
+    s.erase_front();
+    if (!parse_hex(s, &data[0], alpha))
+      throw processor_error("Invalid hexedecimal color code: " + str);
+    space = colorspaces::rgb;
+  } else {
+    auto pos = s.find('('); 
+    if (pos != tstring::npos && s.back() == ')') { 
+      space = stospace(s.substr(0, pos).to_string()); 
+      s.erase_front(pos + 1); 
+      s.erase_back();
+      size_t comp_count = 0;
+      while(true) {
+        if (comp_count > 5)
+          throw processor_error("Too much color component: " + str);
+        auto comma = s.find(',');
+        if (comma == tstring::npos) {
+          if (!parse(s, data[comp_count++]))
+            throw processor_error("Invalid decimal number: " + s.to_string());
+          break;
+        }
+        if (!parse(s.substr(0, comma), data[comp_count++]))
+          throw processor_error("Invalid decimal number: " + s.substr(0, comma).to_string());
+        s.erase_front(comma + 1);
+      }
+      size_t supposed_count = component_count(space);
+      if (comp_count > supposed_count) {
+        if (comp_count == supposed_count + 1)
+          alpha = true;
+        else throw processor_error("Wrong number of color components: " + str);
+      } else alpha = false;
+    }
+  }
+  return operate(&data[0], alpha, space);
 }
 
 mod& processor::add_modification(string&& s) {
   token_iterator it(move(s));
   mod* result;
   do {
-    result = &modifications.emplace_back(it, inter);
+    result = &modifications.emplace_back();
+    construct_mod(*result, it, inter);
   } while(it.have_token());
   return *result;
 }

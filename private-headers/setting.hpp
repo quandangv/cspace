@@ -1,6 +1,7 @@
 #pragma once
 
 #include "interface.hpp"
+#include "tstring.hpp"
 
 namespace cspace {
   class interface;
@@ -45,5 +46,5 @@ namespace cspace {
   };
 
   // Contains instances of all the settings used by the interface
-  extern const std::vector<setting*> all_settings;
+  extern const std::vector<const setting*> all_settings;
 }

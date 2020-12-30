@@ -2,21 +2,16 @@
 
 #include <string>
 
-#include "tstring.hpp"
-
 namespace cspace {
   using colorspace = unsigned char;
 
-  std::string to_string(colorspace);
+  std::string spacetos(colorspace);
   colorspace stospace(const std::string&);
   std::string list_colorspaces(const std::string& separator);
-  bool parse_hex(const std::string& value, double* components, bool& have_alpha);
-
 
   void convert(double* value, colorspace from, colorspace to);
   int component_count(colorspace);
   void clamp(double* value, colorspace);
-  int parse_component(const tstring& name, colorspace);
 
   namespace colorspaces {
     // All colorspaces are organized to a tree

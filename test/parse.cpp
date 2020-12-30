@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "parse.hpp"
+
 using namespace std;
 using namespace cspace;
 

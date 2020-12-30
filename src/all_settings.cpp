@@ -119,16 +119,7 @@ struct : eater_setting<basic_setting> {
   string long_name() const { return "mod:"; }
   string arguments() const { return "'<comp><op><val>'"; }
   string description() const { return "Apply modifications to the color before converting"; }
-  void eat(string&& s, interface& intf) const {
-    if (strcasecmp(s.data(), "none") == 0) {
-      intf.modifications.clear();
-    } else {
-      token_iterator it(move(s));
-      while(it.have_token()) {
-        intf.modifications.emplace_back(it, intf.inter);
-      }
-    }
-  }
+  void eat(string&& s, interface& intf) const { intf.add_modification(move(s)); }
 } _mod;
 
 struct : short_setting {
@@ -145,6 +136,6 @@ struct : short_setting {
   void action(interface& intf) const { intf.quit = true; }
 } _quit;
 
-const std::vector<setting*> all_settings = {&_help, &_colorspaces, &_swap, &_alpha_first, &_alpha_last, &_quit, &_stay, &_inter, &_hex, &_precision, &_mod};
+const std::vector<const setting*> all_settings = {&_help, &_colorspaces, &_swap, &_alpha_first, &_alpha_last, &_quit, &_stay, &_inter, &_hex, &_precision, &_mod};
 
 GLOBAL_NAMESPACE_END
