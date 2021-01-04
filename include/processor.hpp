@@ -3,11 +3,16 @@
 #include <vector>
 #include <sstream>
 #include <cmath>
+#include <stdexcept>
 
 #include "colorspace.hpp"
+#include "error.hpp"
 
 namespace cspace {
+
   struct mod {
+    struct error : error_base { using error_base::error_base; };
+
     int component;
     char op{0};
     double value{std::nan("")};
@@ -22,6 +27,7 @@ namespace cspace {
   class processor {
     colorspace m_target{colorspaces::rgb};
   public:
+    struct error : error_base { using error_base::error_base; };
     colorspace inter{colorspaces::cielab};
     std::string separator{" "};
     std::vector<mod> modifications{};

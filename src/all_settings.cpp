@@ -10,7 +10,6 @@
 
 GLOBAL_NAMESPACE
 
-DEFINE_ERROR(setting_error);
 constexpr char scope[] = "setting";
 
 void print_all_help() {
@@ -87,7 +86,7 @@ struct : eater_setting<short_setting> {
     if (int val; parse(tstring(s), val)) {
       intf.output_stream << std::setprecision(val);
     } else 
-      throw setting_error("precision: Unknown term argument: " + s);
+      throw setting::error("precision: Unknown term argument: " + s);
   }
 } _precision;
 
@@ -111,7 +110,7 @@ struct : eater_setting<basic_setting> {
     } else if (s == "!")
       intf.use_hex(!intf.use_hex());
     else
-      throw setting_error("hex: Unknown term argument: " + s);
+      throw setting::error("hex: Unknown term argument: " + s);
   }
 } _hex;
 

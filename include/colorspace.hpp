@@ -2,8 +2,11 @@
 
 #include <string>
 
+#include "error.hpp"
+
 namespace cspace {
   using colorspace = unsigned char;
+  struct colorspace_error : error_base { using error_base::error_base; };
 
   std::string spacetos(colorspace);
   colorspace stospace(const std::string&);

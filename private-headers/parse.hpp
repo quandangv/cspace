@@ -2,8 +2,11 @@
 
 #include "colorspace.hpp"
 #include "tstring.hpp"
+#include "error.hpp"
 
 namespace cspace {
+  struct parse_error : error_base { using error_base::error_base; };
+
   bool parse(const tstring&, double&);
   bool parse(const tstring&, int&);
   bool parse(const tstring&, bool&);

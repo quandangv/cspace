@@ -9,6 +9,8 @@ namespace cspace {
   // Settings are options of the interface that can be changed through user input
   // An instance of this class determines how to parse the user input and what action to take
   struct setting {
+    struct error : error_base { using error_base::error_base; };
+
     virtual void on_short_switches(const string&, interface&) const {}
     virtual bool on_long_switch(const string&, interface&) const { return false; }
     virtual void print_help() const {}

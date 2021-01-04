@@ -5,7 +5,6 @@
 
 GLOBAL_NAMESPACE
 
-DEFINE_ERROR(colorspace_error)
 constexpr const char scope[] = "indirect-convert";
 
 using namespace std;

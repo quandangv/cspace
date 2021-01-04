@@ -7,7 +7,6 @@
 
 GLOBAL_NAMESPACE
 
-DEFINE_ERROR(interface_error)
 constexpr char scope[] = "interface";
 
 string interface::add_data(double value) {
@@ -15,7 +14,7 @@ string interface::add_data(double value) {
   if (++data_count >= component_count(from)) {
     if (comma) {
       // The alpha component is present, add another component before we start the operation
-      if (alpha) throw new interface_error("Add-term: Enough components have been received, excess comma");
+      if (alpha) throw new error("Enough components have been received, excess comma");
       alpha = true;
     } else
       // Got enough components, start the operation

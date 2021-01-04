@@ -7,6 +7,8 @@ namespace cspace {
 
   class interface : public processor {
   public:
+    struct error : error_base { using error_base::error_base; };
+
     double data[5];
     int data_count{0};
     colorspace from{colorspaces::rgb};

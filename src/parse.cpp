@@ -8,8 +8,6 @@
 
 GLOBAL_NAMESPACE
 
-DEFINE_ERROR(parse_error)
-
 using namespace std;
 
 bool parse(const tstring& str, double& result) {

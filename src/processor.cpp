@@ -8,7 +8,6 @@
 
 GLOBAL_NAMESPACE
 
-DEFINE_ERROR(processor_error)
 constexpr char scope[] = "processor";
 
 // Apply the right operator to the right component, with the right value
@@ -20,7 +19,7 @@ void mod::apply(double* data) const {
   case '*': target *= value; break;
   case '/': target /= value; break;
   case '=': target = value; break;
-  default: throw processor_error("Mod: Unknown operator: " + string{op});
+  default: throw error("Unknown operator: " + string{op});
   }
 }
 
@@ -36,24 +35,24 @@ void construct_mod(mod& m, token_iterator& it, colorspace space) {
 
   // Next is the operator, which takes a single character
   if (!it.next_token_base<std::ispunct>() || it.token().empty())
-    throw processor_error("Mod: Missing component operator and value in: " + it.input);
+    throw mod::error("Missing component operator and value in: " + it.input);
   m.op = it.token().front();
 
   // Last is the value
   if (!it.next_token() || it.token().empty())
-    throw processor_error("Mod: Missing value in: " + it.input);
+    throw mod::error("Missing value in: " + it.input);
   auto& token = it.token();
   if (token.back() == ',')
     token.erase_back();
   if (!parse(token, m.value))
-    throw processor_error("mod: Can't parse numerical value: " + it.token().to_string());
+    throw mod::error("Can't parse numerical value: " + it.token().to_string());
 }
 
 mod::mod(string&& s, colorspace space) {
   token_iterator it(move(s));
   construct_mod(*this, it, space);
   if (it.next_token())
-    throw processor_error("Mod: Excess tokens in initialization string: " + it.input);
+    throw error("Excess tokens in initialization string: " + it.input);
 }
 
 processor::processor() {
@@ -72,6 +71,8 @@ colorspace processor::target(colorspace s) {
 }
 
 string processor::operate(const string& str) const {
+  if (str.empty())
+    return "";
   double data[5];
   bool alpha;
   colorspace space;
@@ -79,7 +80,7 @@ string processor::operate(const string& str) const {
   if (s[0] == '#') {
     s.erase_front();
     if (!parse_hex(s, &data[0], alpha))
-      throw processor_error("Invalid hexedecimal color code: " + str);
+      throw error("Invalid hexedecimal color code: " + str);
     space = colorspaces::rgb;
   } else {
     auto pos = s.find('('); 
@@ -88,26 +89,23 @@ string processor::operate(const string& str) const {
       s.erase_front(pos + 1); 
       s.erase_back();
       size_t comp_count = 0;
-      while(true) {
+      do {
         if (comp_count > 5)
-          throw processor_error("Too much color component: " + str);
+          throw error("Too many color component: " + str);
         auto comma = s.find(',');
-        if (comma == tstring::npos) {
-          if (!parse(s, data[comp_count++]))
-            throw processor_error("Invalid decimal number: " + s.to_string());
-          break;
-        }
+        if (comma == tstring::npos)
+          comma = s.size();
         if (!parse(s.substr(0, comma), data[comp_count++]))
-          throw processor_error("Invalid decimal number: " + s.substr(0, comma).to_string());
+          throw error("Invalid decimal number: " + s.substr(0, comma).to_string());
         s.erase_front(comma + 1);
-      }
+      } while(!s.empty());
       size_t supposed_count = component_count(space);
       if (comp_count > supposed_count) {
-        if (comp_count == supposed_count + 1)
-          alpha = true;
-        else throw processor_error("Wrong number of color components: " + str);
+        if (comp_count > supposed_count + 1)
+          throw error("Wrong number of color components: " + str);
+        alpha = true;
       } else alpha = false;
-    } else throw processor_error("Unknown operate input: " + str);
+    } else throw error("Unknown operate input: " + str);
   }
   return operate(&data[0], alpha, space);
 }
