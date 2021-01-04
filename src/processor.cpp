@@ -71,7 +71,7 @@ colorspace processor::target(colorspace s) {
   return m_target = s;
 }
 
-string processor::operate(const string& str) {
+string processor::operate(const string& str) const {
   double data[5];
   bool alpha;
   colorspace space;
@@ -107,7 +107,7 @@ string processor::operate(const string& str) {
           alpha = true;
         else throw processor_error("Wrong number of color components: " + str);
       } else alpha = false;
-    }
+    } else throw processor_error("Unknown operate input: " + str);
   }
   return operate(&data[0], alpha, space);
 }
@@ -122,7 +122,7 @@ mod& processor::add_modification(string&& s) {
   return *result;
 }
 
-string processor::operate(double* data, bool have_alpha, colorspace from) {
+string processor::operate(double* data, bool have_alpha, colorspace from) const {
   auto data_ptr = data + (int)(have_alpha && alpha_first);
   if (!modifications.empty()) {
     // Convert to the intermediate color space and do the modifications

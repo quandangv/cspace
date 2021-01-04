@@ -51,12 +51,6 @@ std::string interface::add_term(string&& term) {
   } else {
     // Processing the switches, no commas expected here
     unexpected_comma(term);
-    if (term.front() == '#') {
-      makesure_empty();
-      term.erase(0, 1);
-      if (parse_hex(term, &data[0], alpha))
-        return pop_data(colorspaces::rgb);
-    }
     if (!process_long_switch(term)) {
       // The special switches are differentiated by their last character
       auto control_char = term.back();
@@ -80,7 +74,7 @@ std::string interface::add_term(string&& term) {
         // If the hexedecimal parsing fail, fall through
       default:
         term.push_back(control_char);
-        logger::error("Parsing: Unknown term '" + term + "'");
+        return operate(term);
         break;
       }
     }

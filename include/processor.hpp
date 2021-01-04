@@ -35,8 +35,8 @@ namespace cspace {
     colorspace target() const;
     colorspace target(colorspace);
     mod& add_modification(std::string&&);
-    std::string operate(const std::string&);
-    std::string operate(double* data, bool have_alpha, colorspace from);
+    std::string operate(const std::string&) const;
+    std::string operate(double* data, bool have_alpha, colorspace from) const;
     std::string print(double*data, int count) const;
   };
 }
