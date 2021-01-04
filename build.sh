@@ -99,7 +99,11 @@ install() {
     [[ "${p^^}" != "Y" ]] && INSTALL="OFF" || INSTALL="ON"
   fi
   if [[ "$INSTALL" == ON ]]; then
-    sudo make install || msg_err "Failed to install executables"
+    if ! command -v sudo > /dev/null; then
+      make install || msg_err "Failed to install executables"
+    else
+      sudo make install || msg_err "Failed to install executables"
+    fi
   fi
 }
 
@@ -130,6 +134,7 @@ main() {
 
   msg "Building project"
   make || msg_err "Failed to build project"
+  install
 
   if [[ "$BUILD_TESTS" == ON ]]; then
     for file in ./test/unit_test.*; do
@@ -137,7 +142,6 @@ main() {
     done
   fi
 
-  install
   msg "Build complete!"
 
   exit 0
