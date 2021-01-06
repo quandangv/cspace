@@ -1,10 +1,9 @@
 #include "setting.hpp"
+#include "interface.hpp"
+#include "logger.hpp"
 
 #include <iostream>
 #include <iomanip>
-
-#include "interface.hpp"
-#include "logger.hpp"
 
 GLOBAL_NAMESPACE
 

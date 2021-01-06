@@ -1,10 +1,9 @@
 #include "parse.hpp"
 #include "logger.hpp"
+#include "tstring.hpp"
 
 #include <sstream>
 #include <iomanip>
-
-#include "tstring.hpp"
 
 GLOBAL_NAMESPACE
 

@@ -1,12 +1,11 @@
 #include "interface.hpp"
 #include "logger.hpp"
-
-#include <iomanip>
-#include <iostream>
-
 #include "token_iterator.hpp"
 #include "setting.hpp"
 #include "parse.hpp"
+
+#include <iomanip>
+#include <iostream>
 
 GLOBAL_NAMESPACE
 

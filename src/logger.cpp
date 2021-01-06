@@ -1,8 +1,7 @@
 #include "logger.hpp"
+#include "format.hpp"
 
 #include <iostream>
-
-#include "format.hpp"
 
 namespace logger {
   void info(const string& text) {

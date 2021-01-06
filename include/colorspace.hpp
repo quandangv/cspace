@@ -5,8 +5,8 @@
 #include "error.hpp"
 
 namespace cspace {
-  using colorspace = unsigned char;
   struct colorspace_error : error_base { using error_base::error_base; };
+  using colorspace = unsigned char;
 
   std::string spacetos(colorspace);
   colorspace stospace(const std::string&);

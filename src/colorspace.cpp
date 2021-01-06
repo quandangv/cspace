@@ -1,7 +1,8 @@
 #include "colorspace.hpp"
 #include "logger.hpp"
-
 #include "conversion.hpp"
+
+#include <cstring>
 
 GLOBAL_NAMESPACE
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cerrno>
-#include <cstring>
 #include <stdexcept>
 
 namespace cspace {

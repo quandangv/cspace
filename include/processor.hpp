@@ -25,9 +25,13 @@ namespace cspace {
   };
 
   class processor {
+  protected:
     colorspace m_target{colorspaces::rgb};
+    std::string print(double*data, int count) const;
+
   public:
     struct error : error_base { using error_base::error_base; };
+
     colorspace inter{colorspaces::cielab};
     std::string separator{" "};
     std::vector<mod> modifications{};
@@ -43,6 +47,5 @@ namespace cspace {
     mod& add_modification(std::string&&);
     std::string operate(const std::string&) const;
     std::string operate(double* data, bool have_alpha, colorspace from) const;
-    std::string print(double*data, int count) const;
   };
 }

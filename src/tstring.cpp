@@ -1,10 +1,9 @@
 #include "tstring.hpp"
+#include "logger.hpp"
 
 #include <iostream>
 #include <cctype>
 #include <algorithm>
-
-#include "logger.hpp"
 
 const char* clone(const char* str, size_t length) {
   char* result = new char[length];

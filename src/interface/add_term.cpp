@@ -1,9 +1,8 @@
 #include "interface.hpp"
 #include "logger.hpp"
+#include "parse.hpp"
 
 #include <iomanip>
-
-#include "parse.hpp"
 
 GLOBAL_NAMESPACE
 
