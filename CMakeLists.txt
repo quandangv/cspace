@@ -4,16 +4,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(cspace VERSION 1.1.0)
 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-include(utils)
-
-add_subdirectory(private-headers)
-add_subdirectory(include)
-add_subdirectory(src)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+include(cmake/file_list)
+include(cmake/targets)
 
 unset(DEBUG_SCOPES CACHE)
-
-if(BUILD_TESTS)
-  enable_testing()
-  add_subdirectory(test)
-endif()

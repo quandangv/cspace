@@ -1,7 +1,5 @@
-include_directories(${CMAKE_CURRENT_LIST_DIR})
-
 # Download and unpack googletest at configure time {{{
-  configure_file(CMakeLists.txt.in
+  configure_file(${CMAKE_CURRENT_LIST_DIR}/googletest.in
                  ${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt)
   execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
                   RESULT_VARIABLE result
@@ -24,48 +22,36 @@ include_directories(${CMAKE_CURRENT_LIST_DIR})
                    EXCLUDE_FROM_ALL)
 # }}}
 
-add_custom_target(cspace_tests COMMENT "Building all unit test")
-add_custom_target(cspace_libtests COMMENT "Building all library unit test")
-add_library(libcspace SHARED IMPORTED)
-set_property(TARGET libcspace PROPERTY IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/src/libcspace.so)
+add_custom_target(${PROJECT_NAME}_tests COMMENT "Building all unit test")
+add_library(lib${PROJECT_NAME} SHARED IMPORTED)
+set_property(TARGET lib${PROJECT_NAME} PROPERTY IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/bin/lib${PROJECT_NAME}.so)
 
 # Utility functions to add unit tests {{{
-  # Add internal unit tests. Public and private headers are visible to them
-  function(add_unit_test source_file)
+  function(setup_unit_test source_file output_name)
     string(REPLACE "/" "_" testname ${source_file})
     set(name "test.${testname}")
-    add_executable(${name} ${source_file}.cpp)
-
-    # Link against gmock (this automatically links against gtest)
-    target_link_libraries(${name} cspace gmock_main)
+    set(${output_name} ${name} PARENT_SCOPE)
+    add_executable(${name} ${test_dir}/${source_file}.cpp)
     add_test(NAME ${name} COMMAND ${name})
-    add_dependencies(cspace_tests ${name})
+    add_dependencies(${PROJECT_NAME}_tests ${name})
+    set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test)
+  endfunction()
+
+  # Add internal unit tests. Public and private headers are visible to them
+  function(add_unit_test source_file)
+    setup_unit_test(${source_file} name)
+    # Link against gmock (this automatically links against gtest)
+    target_link_libraries(${name} ${PROJECT_NAME} gmock_main)
   endfunction()
 
   # Add external unit tests. Only the public headers are visible to them
   function(add_lib_test source_file)
-    string(REPLACE "/" "_" testname ${source_file})
-    set(name "unit_test.${testname}")
-    add_executable(${name} ${source_file}.cpp)
-
-    target_link_libraries(${name} libcspace gmock_main)
-    target_include_directories(${name} PUBLIC ${PROJECT_SOURCE_DIR}/include)
-    add_test(NAME ${name} COMMAND ${name})
-    add_dependencies(cspace_libtests ${name})
+    setup_unit_test(${source_file} name)
+    target_link_libraries(${name} lib${PROJECT_NAME} gmock_main)
+    target_include_directories(${name} PUBLIC ${PROJECT_SOURCE_DIR}/include ${private_headers_dir})
   endfunction()
 # }}}
 
-# Add unit tests here {{{
-
-  add_unit_test(parse)
-  add_unit_test(interface)
-  add_lib_test(conversion)
-  add_lib_test(processor)
-
-# }}}
-
 # Run make check to build and run all unit tests
-add_custom_target(check
-                  COMMAND GTEST_COLOR=1 ctest --output-on-failure
-                  DEPENDS cspace_tests cspace_libtests)
-
+add_custom_target(check COMMAND GTEST_COLOR=1 ctest --output-on-failure
+                        DEPENDS ${PROJECT_NAME}_tests)
