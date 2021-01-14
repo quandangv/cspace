@@ -1,4 +1,4 @@
-if(PLATFORM_LINUX)
+if(PLATFORM EQUAL "Linux")
   add_compile_definitions(PLATFORM_LINUX)
 endif()
 
