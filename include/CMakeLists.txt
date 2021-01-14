@@ -1,6 +1,11 @@
-list(APPEND dirs ${CMAKE_CURRENT_LIST_DIR})
+get_include_dirs(include_dir)
 
-file(GLOB_RECURSE public_headers ABSOLUTE ${CMAKE_CURRENT_LIST_DIR} *.hpp)
-
-set(dirs ${dirs} PARENT_SCOPE)
-set(public_headers ${public_headers} PARENT_SCOPE)
+# public headers {{{
+set(CSPACE_HEADERS
+  ${CMAKE_CURRENT_LIST_DIR}/colorspace.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/conversion.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/error.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/interface.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/processor.hpp
+PARENT_SCOPE)
+# }}}

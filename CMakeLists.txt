@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
-
-project(cspace VERSION 1.1.0)
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-if(PLATFORM_LINUX)
-  add_compile_definitions(PLATFORM_LINUX)
-endif()
+project(cspace VERSION 1.1.0)
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+include(utils)
 
 add_subdirectory(private-headers)
 add_subdirectory(include)
