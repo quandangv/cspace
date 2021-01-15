@@ -14,6 +14,9 @@ namespace cspace {
     bool process_long_switch(const std::string& name);
     void feed_term_eater(std::string&& data);
     void unexpected_comma(const std::string& term);
+    bool pop_data();
+    bool pop_data(colorspace);
+    bool add_data(double);
 
   public:
     struct error : error_base { using error_base::error_base; };
@@ -24,12 +27,15 @@ namespace cspace {
     bool quit{false};
     bool stay{false};
 
-    std::string pop_data();
-    std::string pop_data(colorspace);
-    std::string add_term(std::string&&);
-    std::string add_data(double);
-    std::string add_multiple_terms(const std::string&, const std::string& separator = "\n");
     void makesure_empty();
     void add_term_eater(const term_eater*);
+    bool silent_add_term(const std::string&, const std::string& separator);
+    bool silent_add_term(std::string&&);
+
+    template<typename... Args> std::string add_term(Args... args) {
+      output_stream.str("");
+      silent_add_term(args...);
+      return output_stream.str();
+    }
   };
 }

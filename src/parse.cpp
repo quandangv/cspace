@@ -90,7 +90,7 @@ int parse_component(const tstring& name, colorspace space) {
     CASE(value, 2)
     CASE(v, 2)
   }
-  throw parse_error(to_string(space) + " colorspace: Unknown component: " + name.to_string());
+  throw parse_error(spacetos(space) + " colorspace: Unknown component: " + name.to_string());
   #undef CASE
 }
 

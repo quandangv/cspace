@@ -9,34 +9,35 @@ GLOBAL_NAMESPACE
 
 constexpr char scope[] = "interface";
 
-string interface::add_data(double value) {
+bool interface::add_data(double value) {
   data[data_count] = value;
   if (++data_count >= component_count(from)) {
     if (comma) {
       // The alpha component is present, add another component before we start the operation
-      if (alpha) throw new error("Enough components have been received, excess comma");
+      if (alpha)
+        throw new error("Enough components have been received, excess comma");
       alpha = true;
     } else
       // Got enough components, start the operation
       return pop_data(from);
   }
   comma = false;
-  return "";
+  return false;
 }
 
 // Process the given term
 // If the term triggers an operation, the resulting string is returned
-std::string interface::add_term(string&& term) {
+bool interface::silent_add_term(string&& term) {
   logger::debug<scope>("Interface-Term: '" + term + "'");
   unexpected_comma(term);
-  if (term.empty()) return "";
+  if (term.empty()) return false;
   if (term.back() == ',') {
     // Extract the comma from the end of the term
     // The comma is used to signify the presence of the alpha component
     term.pop_back();
     if (term.empty()) {
       logger::warn("Parsing term: Orphaned comma ',', put commas at the end of a term without spaces");
-      return "";
+      return false;
     } else
       comma = true;
   }
@@ -73,21 +74,23 @@ std::string interface::add_term(string&& term) {
         // If the hexedecimal parsing fail, fall through
       default:
         term.push_back(control_char);
-        return operate(term);
-        break;
+        processor::silent_operate(term);
+        return true;
       }
     }
   }
-  return "";
+  return false;
 }
 
-string interface::add_multiple_terms(const string& terms, const string& sep) {
+bool interface::silent_add_term(const string& terms, const string& sep) {
   tstring token;
-  for(size_t position; get_token<std::isspace>(terms, position, token);) {
-    silent_operate(token);
-    output_stream << sep;
+  output_stream.str("");
+  for(size_t position = 0; get_token<token_iterator::isntspace>(terms, position, token);) {
+    if (silent_add_term(token)) {
+      output_stream << sep;
+    }
   }
-  return output_stream.str();
+  return true;
 }
 
 GLOBAL_NAMESPACE_END

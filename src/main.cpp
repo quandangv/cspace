@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     while(!intf.quit) {
       try {
         string line; std::getline(cin, line);
-        auto result = intf.add_multiple_terms(line);
+        auto result = intf.add_term(line, "\n");
         if (!result.empty())
           std::cout << result << std::endl;
       } catch (const exception& e) {

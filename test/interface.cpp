@@ -13,7 +13,7 @@ struct TestSet {
     item.separator = "-";
     
     // feed terms to the interface and check the result
-    string real_result = item.add_multiple_terms(terms_str, " ");
+    string real_result = item.add_term(terms_str, " ");
     EXPECT_EQ(real_result, result_str);
   }
 };

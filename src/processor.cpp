@@ -116,7 +116,7 @@ void processor::silent_operate(const string& str) const {
       } else alpha = false;
     } else throw error("Unknown operate input: " + str);
   }
-  return convert(&data[0], alpha, space);
+  silent_operate(&data[0], alpha, space);
 }
 
 void processor::silent_operate(double* data, bool have_alpha, colorspace from) const {

@@ -56,14 +56,14 @@ bool interface::process_long_switch(const string& name) {
 }
 
 // Start conversion and return the resulting string
-string interface::pop_data(colorspace from) {
-  auto result = operate(&data[0], alpha, from);
+bool interface::pop_data(colorspace from) {
+  silent_operate(&data[0], alpha, from);
   data_count = 0;
   alpha = false;
-  return result;
+  return true;
 }
 
-string interface::pop_data() {
+bool interface::pop_data() {
   return pop_data(from);
 }
 

@@ -21,9 +21,9 @@ bool get_token(const string& input, size_t& position, tstring& token) {
       if (position == tstring::npos)
         return false;
 
-      auto start = position + 1;
       if (strchr(quote_chars, input[position]) != nullptr) {
         // Parse terms enclosed in quotes
+        auto start = position + 1;
         position = input.find(input[position], start);
         if (position == tstring::npos) {
           token = tstring(input.data(), start, input.size());
@@ -35,6 +35,7 @@ bool get_token(const string& input, size_t& position, tstring& token) {
         return true;
       } else {
         // Extend the length of the term until we hit an unaccepted character
+        auto start = position;
         for(position = start + 1; position < input.size(); position++)
           if (!char_func(input[position]))
             break;
@@ -58,4 +59,5 @@ public:
   bool have_token();
   bool next_token();
   template<int (*F)(int)> bool next_token_base() { return get_token<F>(input, position, token); }
+  static int isntspace(int c) { return !std::isspace(c); }
 };
