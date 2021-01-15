@@ -20,8 +20,11 @@ void interface::feed_term_eater(string&& arg) {
 // Called before discarding the data
 // Display a warning message if there is unprocessed data
 void interface::makesure_empty() {
-  if (data_count)
-    logger::warn("Interface: There is unprocessed data: " + print(&data[0], data_count) +". It will be discarded");
+  if (data_count) {
+    stringstream ss;
+    print(ss, &data[0], data_count);
+    logger::warn("Interface: There is unprocessed data: " + ss.str() +". It will be discarded");
+  } 
 }
 
 void interface::unexpected_comma(const string& term) {

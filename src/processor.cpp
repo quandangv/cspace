@@ -30,21 +30,21 @@ void construct_mod(mod& m, token_iterator& it, colorspace space) {
     m.component = m.op = m.value = 0;
     return;
   }
-  m.component = parse_component(it.token(), space);
+  m.component = parse_component(it.token, space);
 
   // Next is the operator, which takes a single character
-  if (!it.next_token_base<std::ispunct>() || it.token().empty())
+  if (!it.next_token_base<std::ispunct>() || it.token.empty())
     throw mod::error("Missing component operator and value in: " + it.input);
-  m.op = it.token().front();
+  m.op = it.token.front();
 
   // Last is the value
-  if (!it.next_token() || it.token().empty())
+  if (!it.next_token() || it.token.empty())
     throw mod::error("Missing value in: " + it.input);
-  auto& token = it.token();
+  auto token = it.token;
   if (token.back() == ',')
     token.erase_back();
   if (!parse(token, m.value))
-    throw mod::error("Can't parse numerical value: " + it.token().to_string());
+    throw mod::error("Can't parse numerical value: " + it.token.to_string());
 }
 
 mod::mod(string&& s, colorspace space) {
@@ -69,9 +69,19 @@ colorspace processor::target(colorspace s) {
   return m_target = s;
 }
 
-string processor::operate(const string& str) const {
+mod& processor::add_modification(string&& s) {
+  token_iterator it(move(s));
+  mod* result;
+  do {
+    result = &modifications.emplace_back();
+    construct_mod(*result, it, inter);
+  } while(it.have_token());
+  return *result;
+}
+
+void processor::silent_operate(const string& str) const {
   if (str.empty())
-    return "";
+    return;
   double data[5];
   bool alpha;
   colorspace space;
@@ -106,20 +116,10 @@ string processor::operate(const string& str) const {
       } else alpha = false;
     } else throw error("Unknown operate input: " + str);
   }
-  return operate(&data[0], alpha, space);
+  return convert(&data[0], alpha, space);
 }
 
-mod& processor::add_modification(string&& s) {
-  token_iterator it(move(s));
-  mod* result;
-  do {
-    result = &modifications.emplace_back();
-    construct_mod(*result, it, inter);
-  } while(it.have_token());
-  return *result;
-}
-
-string processor::operate(double* data, bool have_alpha, colorspace from) const {
+void processor::silent_operate(double* data, bool have_alpha, colorspace from) const {
   auto data_ptr = data + (int)(have_alpha && alpha_first);
   if (!modifications.empty()) {
     // Convert to the intermediate color space and do the modifications
@@ -133,23 +133,19 @@ string processor::operate(double* data, bool have_alpha, colorspace from) const 
   clamp(data_ptr, m_target);
   
   // Print data to output stream
-  auto comp_count = component_count(m_target) + (int)have_alpha;
-  if (output_stream.flags() & std::ios::hex) {
-    output_stream.str("");
-    output_stream << '#';
-    for(int i = 0; i < comp_count; i++)
-      output_stream << std::setw(2) << (int)round(data[i]*255);
-    return output_stream.str();
-  } else
-    return print(data, comp_count);
+  print(output_stream, data, component_count(m_target) + (int)have_alpha);
 }
 
-string processor::print(double* data, int count) const {
-  output_stream.str("");
-  output_stream << data[0];
-  for(int i = 1; i < count; i++)
-    output_stream << separator << data[i];
-  return output_stream.str();
+void processor::print(ostream& os, double* data, int count) const {
+  if (os.flags() & std::ios::hex) {
+    os << '#';
+    for(int i = 0; i < count; i++)
+      os << std::setw(2) << (int)round(data[i]*255);
+  } else {
+    os << data[0];
+    for(int i = 1; i < count; i++)
+      os << separator << data[i];
+  }
 }
 
 // Turns on or off hexedecimal output mode

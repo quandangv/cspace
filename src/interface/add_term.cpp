@@ -1,6 +1,7 @@
 #include "interface.hpp"
 #include "logger.hpp"
 #include "parse.hpp"
+#include "token_iterator.hpp"
 
 #include <iomanip>
 
@@ -78,6 +79,15 @@ std::string interface::add_term(string&& term) {
     }
   }
   return "";
+}
+
+string interface::add_multiple_terms(const string& terms, const string& sep) {
+  tstring token;
+  for(size_t position; get_token<std::isspace>(terms, position, token);) {
+    silent_operate(token);
+    output_stream << sep;
+  }
+  return output_stream.str();
 }
 
 GLOBAL_NAMESPACE_END

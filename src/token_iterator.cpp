@@ -22,15 +22,5 @@ int isntspace(int c) {
 
 // Advance to the next token made up of non-space characters
 bool token_iterator::next_token() {
-  return next_token_base<isntspace>();
-}
-
-// Return part of the current token to be used for the next one
-token_iterator& token_iterator::return_token(size_t from) {
-  position = mark + from;
-  return *this;
-}
-
-tstring& token_iterator::token() {
-  return m_token;
+  return get_token<isntspace>(input, position, token);
 }

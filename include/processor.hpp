@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <sstream>
+#include <ostream>
 #include <cmath>
 #include <stdexcept>
 
@@ -27,7 +28,7 @@ namespace cspace {
   class processor {
   protected:
     colorspace m_target{colorspaces::rgb};
-    std::string print(double*data, int count) const;
+    void print(std::ostream&, double* data, int count) const;
 
   public:
     struct error : error_base { using error_base::error_base; };
@@ -45,7 +46,13 @@ namespace cspace {
     colorspace target() const;
     colorspace target(colorspace);
     mod& add_modification(std::string&&);
-    std::string operate(const std::string&) const;
-    std::string operate(double* data, bool have_alpha, colorspace from) const;
+    void silent_operate(const std::string&) const;
+    void silent_operate(double* data, bool have_alpha, colorspace from) const;
+
+    template<typename... Args> std::string operate(Args... args) {
+      output_stream.str("");
+      silent_operate(args...);
+      return output_stream.str();
+    }
   };
 }

@@ -28,6 +28,7 @@ namespace cspace {
     std::string pop_data(colorspace);
     std::string add_term(std::string&&);
     std::string add_data(double);
+    std::string add_multiple_terms(const std::string&, const std::string& separator = "\n");
     void makesure_empty();
     void add_term_eater(const term_eater*);
   };

@@ -5,24 +5,15 @@
 #include <vector>
 #include <sstream>
 
-#include "token_iterator.hpp"
-
 using namespace std;
 using namespace cspace;
 struct TestSet {
   string terms_str, result_str;
   void check(interface& item) const {
     item.separator = "-";
-    token_iterator it;
-    it.set_input(string(terms_str));
     
     // feed terms to the interface and check the result
-    string real_result = "";
-    for(; it.next_token();) {
-      auto r = item.add_term(it.token().to_string());
-      if (!r.empty())
-        real_result += r + " ";
-    }
+    string real_result = item.add_multiple_terms(terms_str, " ");
     EXPECT_EQ(real_result, result_str);
   }
 };
