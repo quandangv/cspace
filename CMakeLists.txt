@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project(cspace VERSION 1.1.0)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-include(cmake/file_list)
+include(file_list)
 include(cmake/targets)
 
 unset(DEBUG_SCOPES CACHE)
