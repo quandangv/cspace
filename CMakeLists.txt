@@ -12,7 +12,7 @@ auto_targets(cspace "${HEADER_DIRS}" "${INCLUDE_DIR}" "${SOURCES}" "${HEADERS}" 
 
 if(BUILD_TESTS)
   include(cmake/test)
-  add_unit_tests(${TEST_DIR} "${INTERNAL_TESTS}" "${EXTERNAL_TESTS}")
+  add_unit_tests(${TEST_DIR} "${INTERNAL_TESTS}" "${EXTERNAL_TESTS}" "${TEST_FILES}")
 endif()
 
 unset(DEBUG_SCOPES CACHE)

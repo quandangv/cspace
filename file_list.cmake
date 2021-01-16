@@ -51,3 +51,4 @@ set(SOURCES
 
 set(INTERNAL_TESTS parse interface)
 set(EXTERNAL_TESTS conversion processor)
+set(TEST_FILES)
