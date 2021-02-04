@@ -1,10 +1,11 @@
 # paths to various directories
 get_filename_component(GENERATED_HEADERS_DIR ${CMAKE_BINARY_DIR}/generated-headers ABSOLUTE)
-get_filename_component(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include ABSOLUTE)
+get_filename_component(PUBLIC_HEADERS_DIR ${CMAKE_SOURCE_DIR}/include ABSOLUTE)
 get_filename_component(PRIVATE_HEADERS_DIR ${CMAKE_SOURCE_DIR}/private-headers ABSOLUTE)
 get_filename_component(SRC_DIR ${CMAKE_SOURCE_DIR}/src ABSOLUTE)
 get_filename_component(TEST_DIR ${CMAKE_SOURCE_DIR}/test ABSOLUTE)
-set(HEADER_DIRS ${INCLUDE_DIR} ${PRIVATE_HEADERS_DIR} ${GENERATED_HEADERS_DIR})
+get_filename_component(LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib ABSOLUTE)
+set(INCLUDE_DIRS ${PUBLIC_HEADERS_DIR} ${PRIVATE_HEADERS_DIR} ${GENERATED_HEADERS_DIR})
 
 # configure files {{{
   if(PLATFORM EQUAL "Linux")
@@ -20,11 +21,11 @@ set(HEADER_DIRS ${INCLUDE_DIR} ${PRIVATE_HEADERS_DIR} ${GENERATED_HEADERS_DIR})
 
 # public headers
 set(HEADERS
-  ${INCLUDE_DIR}/colorspace.hpp
-  ${INCLUDE_DIR}/conversion.hpp
-  ${INCLUDE_DIR}/error.hpp
-  ${INCLUDE_DIR}/interface.hpp
-  ${INCLUDE_DIR}/processor.hpp
+  ${PUBLIC_HEADERS_DIR}/colorspace.hpp
+  ${PUBLIC_HEADERS_DIR}/conversion.hpp
+  ${PUBLIC_HEADERS_DIR}/error.hpp
+  ${PUBLIC_HEADERS_DIR}/interface.hpp
+  ${PUBLIC_HEADERS_DIR}/processor.hpp
 )
 
 # source files
