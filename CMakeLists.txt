@@ -9,8 +9,8 @@ include(cmake/variables)
 include(file_list)
 include(cmake/targets)
 
+configure_file(${PRIVATE_HEADERS_DIR}/common.hpp.in  ${GENERATED_HEADERS_DIR}/common.hpp)
+
 if(BUILD_TESTS)
   include(cmake/test)
 endif()
-
-unset(DEBUG_SCOPES CACHE)

@@ -1,5 +1,5 @@
 #include "colorspace.hpp"
-#include "test.hpp"
+#include "test.h"
 
 #include <vector>
 
