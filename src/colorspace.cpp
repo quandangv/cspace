@@ -27,6 +27,8 @@ using namespace colorspaces;
 colorspace stospace(const string& value) {
   #define CASE(c) if (strncasecmp(value.c_str(), #c, value.size()) == 0) return c;
   APPLY_COLORSPACES
+  if (strncasecmp(value.c_str(), "lab", value.size()) == 0) return cielab;
+  if (strncasecmp(value.c_str(), "lch", value.size()) == 0) return cielch;
   #undef CASE
   throw colorspace_error("Unknown colorspace: "s + value);
 }

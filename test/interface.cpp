@@ -23,6 +23,8 @@ class GetTest : public ::testing::Test, public ::testing::WithParamInterface<Tes
 vector<TestSet> interface_tests = {
   {"0.1 0.2 0.3, 0.4 0.5 0.6 0.7", "#1A334D66 #8099B3 "},
   {"HSV! rgb: 1 0 0 0 1 1 0.69", "0-1-1 180-1-1 "},
+  {"'cielch(1, 1, 216)'", "#00FFFF "},
+  {"'lch(1, 1, 216)'", "#00FFFF "},
   {"1 2 3 hsv! 1 1 2", "#FFFFFF 240-0.5-1 "},
   {"hsv! 0 1 1 swap 120 1 1", "180-1-1 0-1-0 "},
   {"cmyk! 0.5 0.25 1", "0.5-0.75-0-0 "},
