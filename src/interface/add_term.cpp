@@ -1,8 +1,10 @@
 #include "interface.hpp"
+#include "common.hpp"
 #include "logger.hpp"
 #include "parse.hpp"
 #include "token_iterator.hpp"
 
+#include <iostream>
 #include <iomanip>
 
 GLOBAL_NAMESPACE
@@ -83,9 +85,10 @@ bool interface::silent_add_term(string&& term) {
 }
 
 bool interface::silent_add_term(const string& terms, const string& sep) {
-  tstring token;
+  tstring ts(terms);
   output_stream.str("");
-  for(size_t position = 0; get_token<token_iterator::isntspace>(terms, position, token);) {
+  for(tstring token; !(token = get_word(ts)).empty();) {
+    cout << "Add term: " << token << endl;
     if (silent_add_term(token)) {
       output_stream << sep;
     }

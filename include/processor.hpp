@@ -20,7 +20,7 @@ namespace cspace {
 
     mod() {}
     mod(int component, char op, double value) : component(component), op(op), value(value) {}
-    mod(std::string&&, colorspace);
+    mod(const std::string&, colorspace);
 
     void apply(double* target) const;
   };
@@ -45,7 +45,7 @@ namespace cspace {
     bool use_hex(bool);
     colorspace target() const;
     colorspace target(colorspace);
-    mod& add_modification(std::string&&);
+    mod& add_modification(const std::string&);
     void silent_operate(const std::string&) const;
     void silent_operate(double* data, bool have_alpha, colorspace from) const;
 

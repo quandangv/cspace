@@ -22,36 +22,35 @@ void mod::apply(double* data) const {
   }
 }
 
-void construct_mod(mod& m, token_iterator& it, colorspace space) {
-  logger::debug<scope>("Construct mod: " + it.input);
+void construct_mod(mod& m, tstring& ts, colorspace space) {
+  tstring word;
   // The argument for this setting follows the format: <component> <operator> <value>, ...
   // First token is the component
-  if (!it.next_token_base<std::isalnum>()) {
+  if (word = get_token<std::isalnum>(ts); word.untouched()) {
     m.component = m.op = m.value = 0;
     return;
   }
-  m.component = parse_component(it.token, space);
+  m.component = parse_component(word, space);
 
   // Next is the operator, which takes a single character
-  if (!it.next_token_base<std::ispunct>() || it.token.empty())
-    throw mod::error("Missing component operator and value in: " + it.input);
-  m.op = it.token.front();
+  if (word = get_token<std::ispunct>(ts); word.empty())
+    throw mod::error("Missing component operator and value in: " + ts);
+  m.op = word.front();
 
   // Last is the value
-  if (!it.next_token() || it.token.empty())
-    throw mod::error("Missing value in: " + it.input);
-  auto token = it.token;
-  if (token.back() == ',')
-    token.erase_back();
-  if (!parse(token, m.value))
-    throw mod::error("Can't parse numerical value: " + it.token.to_string());
+  if (word = get_word(ts); word.empty())
+    throw mod::error("Missing value in: " + ts);
+  if (word.back() == ',')
+    word.erase_back();
+  if (!parse(word, m.value))
+    throw mod::error("Can't parse numerical value: " + word);
 }
 
-mod::mod(string&& s, colorspace space) {
-  token_iterator it(move(s));
-  construct_mod(*this, it, space);
-  if (it.next_token())
-    throw error("Excess tokens in initialization string: " + it.input);
+mod::mod(const string& s, colorspace space) {
+  tstring ts;
+  construct_mod(*this, ts, space);
+  if (!ts.empty())
+    throw error("Excess tokens in initialization string: " + s);
 }
 
 processor::processor() {
@@ -69,13 +68,13 @@ colorspace processor::target(colorspace s) {
   return m_target = s;
 }
 
-mod& processor::add_modification(string&& s) {
-  token_iterator it(move(s));
+mod& processor::add_modification(const string& s) {
   mod* result;
+  tstring ts{s};
   do {
     result = &modifications.emplace_back();
-    construct_mod(*result, it, inter);
-  } while(it.have_token());
+    construct_mod(*result, ts, inter);
+  } while(!ts.empty());
   return *result;
 }
 
@@ -92,20 +91,20 @@ void processor::silent_operate(const string& str) const {
       throw error("Invalid hexedecimal color code: " + str);
     space = colorspaces::rgb;
   } else {
-    auto pos = s.find('('); 
+    auto pos = find(s, '('); 
     if (pos != tstring::npos && s.back() == ')') { 
-      space = stospace(s.substr(0, pos).to_string()); 
+      space = stospace(s.interval(0, pos)); 
       s.erase_front(pos + 1); 
       s.erase_back();
       size_t comp_count = 0;
       do {
         if (comp_count > 5)
           throw error("Too many color component: " + str);
-        auto comma = s.find(',');
+        auto comma = find(s, ',');
         if (comma == tstring::npos)
           comma = s.size();
-        if (!parse(s.substr(0, comma), data[comp_count++]))
-          throw error("Invalid decimal number: " + s.substr(0, comma).to_string());
+        if (!parse(s.interval(0, comma), data[comp_count++]))
+          throw error("Invalid decimal number: " + s.interval(0, comma));
         s.erase_front(comma + 1);
       } while(!s.empty());
       size_t supposed_count = component_count(space);

@@ -1,3 +1,10 @@
+# Load strings submodule
+execute_process(COMMAND git submodule update --init --rebase -- lib/strings)
+
+include(lib/strings/file_list)
+set(STRINGS_PUBLIC_HEADERS_DIR ${PUBLIC_HEADERS_DIR})
+list(APPEND INCLUDE_DIRS ${STRINGS_PUBLIC_HEADERS_DIR})
+
 # paths to various directories
 get_filename_component(GENERATED_HEADERS_DIR ${CMAKE_BINARY_DIR}/generated-headers ABSOLUTE)
 get_filename_component(PUBLIC_HEADERS_DIR    ${PROJECT_SOURCE_DIR}/include ABSOLUTE)
@@ -25,8 +32,6 @@ set(SOURCES
   ${SRC_DIR}/colorspace.cpp
   ${SRC_DIR}/parse.cpp
   ${SRC_DIR}/setting.cpp
-  ${SRC_DIR}/token_iterator.cpp
-  ${SRC_DIR}/tstring.cpp
   ${SRC_DIR}/processor.cpp
 
   ${SRC_DIR}/interface/add_term.cpp
@@ -38,6 +43,7 @@ set(SOURCES
   ${SRC_DIR}/conversion/hsl_hsv.cpp
   ${SRC_DIR}/conversion/jzazbz.cpp
   ${SRC_DIR}/conversion/xyz.cpp
+  ${TSTRING_SOURCES}
 )
 
 set(INTERNAL_TESTS parse interface)
