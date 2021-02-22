@@ -9,6 +9,15 @@ GLOBAL_NAMESPACE
 
 constexpr char scope[] = "processor";
 
+processor::processor(const processor& other) {
+  inter = other.inter;
+  separator = other.separator;
+  modifications = other.modifications;
+  alpha_first = other.alpha_first;
+  output_stream.precision(other.output_stream.precision());
+  use_hex(other.use_hex());
+}
+
 // Apply the right operator to the right component, with the right value
 void mod::apply(double* data) const {
   auto& target = data[component];
@@ -158,7 +167,7 @@ bool processor::use_hex(bool value) {
   return value;
 }
 
-bool processor::use_hex() {
+bool processor::use_hex() const {
   return output_stream.flags() & std::ios::hex;
 }
 

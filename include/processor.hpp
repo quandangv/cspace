@@ -40,8 +40,9 @@ namespace cspace {
     mutable std::stringstream output_stream;
 
     processor();
+    processor(const processor&);
 
-    bool use_hex();
+    bool use_hex() const;
     bool use_hex(bool);
     colorspace target() const;
     colorspace target(colorspace);
