@@ -1,5 +1,5 @@
 # Load strings submodule
-execute_process(COMMAND git submodule update --init --rebase -- lib/strings)
+execute_process(COMMAND git submodule update --init --rebase -- ${PROJECT_SOURCE_DIR}/lib/strings)
 
 include(lib/strings/file_list)
 set(STRINGS_PUBLIC_HEADERS_DIR ${PUBLIC_HEADERS_DIR})
@@ -17,7 +17,7 @@ list(APPEND INCLUDE_DIRS ${PUBLIC_HEADERS_DIR} ${PRIVATE_HEADERS_DIR} ${GENERATE
 unset(DEBUG_SCOPES CACHE)
 
 # public headers
-set(PUBLIC_HEADERS
+set(HEADERS
   ${PUBLIC_HEADERS_DIR}/colorspace.hpp
   ${PUBLIC_HEADERS_DIR}/conversion.hpp
   ${PUBLIC_HEADERS_DIR}/error.hpp
