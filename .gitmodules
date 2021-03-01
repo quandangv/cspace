@@ -6,4 +6,4 @@
 	url = https://github.com/google/googletest
 [submodule "lib/strings"]
 	path = lib/strings
-	url = git@github.com:quandangv/strings
+	url = https://github.com/quandangv/strings
