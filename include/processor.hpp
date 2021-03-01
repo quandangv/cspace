@@ -49,6 +49,7 @@ namespace cspace {
     mod& add_modification(const std::string&);
     void silent_operate(const std::string&) const;
     void silent_operate(double* data, bool have_alpha, colorspace from) const;
+    processor& operator=(const processor&);
 
     template<typename... Args> std::string operate(Args... args) const {
       output_stream.str("");

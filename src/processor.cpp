@@ -18,6 +18,16 @@ processor::processor(const processor& other) {
   use_hex(other.use_hex());
 }
 
+processor& processor::operator=(const processor& other) {
+  inter = other.inter;
+  separator = other.separator;
+  modifications = other.modifications;
+  alpha_first = other.alpha_first;
+  output_stream.precision(other.output_stream.precision());
+  use_hex(other.use_hex());
+  return *this;
+}
+
 // Apply the right operator to the right component, with the right value
 void mod::apply(double* data) const {
   auto& target = data[component];
