@@ -73,7 +73,7 @@ bool interface::silent_add_term(string&& term) {
         makesure_empty();
         if (parse_hex(term, &data[0], alpha))
           return pop_data(colorspaces::rgb);
-        // If the hexedecimal parsing fail, fall through
+        [[fallthrough]];
       default:
         term.push_back(control_char);
         processor::silent_operate(term);

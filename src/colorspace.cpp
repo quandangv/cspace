@@ -132,6 +132,7 @@ void clamp(double* value, colorspace space) {
   switch (space) {
   case cmyk:
     clamp(value[3], 0, 1);
+    [[fallthrough]];
   case rgb:
     clamp(value[0], 0, 1);
     clamp(value[1], 0, 1);

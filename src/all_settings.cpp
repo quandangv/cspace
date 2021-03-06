@@ -51,7 +51,7 @@ struct : setting {
 struct : basic_setting {
   string long_name() const { return "colorspaces?"; }
   string description() const { return "List supported color spaces"; }
-  void action(interface& intf) const { std::cout << list_colorspaces(" "); }
+  void action(interface&) const { std::cout << list_colorspaces(" "); }
 } _colorspaces;
 
 struct : basic_setting {

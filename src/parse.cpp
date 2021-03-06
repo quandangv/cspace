@@ -11,12 +11,12 @@ using namespace std;
 
 bool parse(const tstring& str, double& result) {
   int len;
-  return sscanf(str.begin(), "%lf%n", &result, &len) == 1 && len == str.size();
+  return sscanf(str.begin(), "%lf%n", &result, &len) == 1 && len == (int)str.size();
 }
 
 bool parse(const tstring& str, int& result) {
   int len;
-  return sscanf(str.begin(), "%d%n", &result, &len) == 1 && len == str.size();
+  return sscanf(str.begin(), "%d%n", &result, &len) == 1 && len == (int)str.size();
 }
 
 bool parse(const tstring& str, bool& result) {
