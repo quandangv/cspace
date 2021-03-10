@@ -5,7 +5,6 @@
 
 using namespace std;
 using namespace cspace;
-constexpr const char scope[] = "main";
 
 int main(int argc, char** argv) {
   interface intf;

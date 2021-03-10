@@ -7,8 +7,6 @@
 
 GLOBAL_NAMESPACE
 
-constexpr char scope[] = "processor";
-
 processor::processor(const processor& other) {
   inter = other.inter;
   separator = other.separator;

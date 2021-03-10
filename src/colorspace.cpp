@@ -6,8 +6,6 @@
 
 GLOBAL_NAMESPACE
 
-constexpr const char scope[] = "indirect-convert";
-
 using namespace std;
 using namespace colorspaces;
 

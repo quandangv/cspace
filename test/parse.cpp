@@ -37,7 +37,7 @@ TEST_P(GetTest, parse_hex) {
   auto success = parse_hex(GetParam().first, &comp[0], has_alpha);
   EXPECT_EQ(success, expected.divider != 0);
   if (success) {
-    for (int i = 0; i < expected.comp.size(); i++)
+    for (size_t i = 0; i < expected.comp.size(); i++)
       EXPECT_EQ(expected.comp[i] / expected.divider, comp[i]);
     EXPECT_EQ(expected.has_alpha, has_alpha);
   }

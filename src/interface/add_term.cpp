@@ -9,8 +9,6 @@
 
 GLOBAL_NAMESPACE
 
-constexpr char scope[] = "interface";
-
 bool interface::add_data(double value) {
   data[data_count] = value;
   if (++data_count >= component_count(from)) {
@@ -30,7 +28,6 @@ bool interface::add_data(double value) {
 // Process the given term
 // If the term triggers an operation, the resulting string is returned
 bool interface::silent_add_term(string&& term) {
-  logger::debug<scope>("Interface-Term: '" + term + "'");
   unexpected_comma(term);
   if (term.empty()) return false;
   if (term.back() == ',') {
@@ -88,7 +85,6 @@ bool interface::silent_add_term(const string& terms, const string& sep) {
   tstring ts(terms);
   output_stream.str("");
   for(tstring token; !(token = get_word(ts)).empty();) {
-    cout << "Add term: " << token << endl;
     if (silent_add_term(token)) {
       output_stream << sep;
     }

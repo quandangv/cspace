@@ -9,8 +9,6 @@
 
 GLOBAL_NAMESPACE
 
-constexpr char scope[] = "interface";
-
 // Process an argument as a waiting term
 void interface::feed_term_eater(string&& arg) {
   eater->eat(move(arg), *this);

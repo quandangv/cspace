@@ -9,8 +9,6 @@
 
 GLOBAL_NAMESPACE
 
-constexpr char scope[] = "setting";
-
 void print_all_help() {
   std::cout << "Converts colors from one color space to another.\nUsage: cspace [TERM] [TERM] [DATA] ...\n  Data are floating-point numbers that will be the input for the conversions\n  Terms are one of the following:\n";
   constexpr int term_indent = 26, example_indent = 39;
