@@ -158,7 +158,7 @@ void processor::print(ostream& os, double* data, int count) const {
   if (os.flags() & std::ios::hex) {
     os << '#';
     for(int i = 0; i < count; i++)
-      os << std::setw(2) << (int)round(data[i]*255);
+      os << std::setw(2) << lround(data[i]*255);
   } else {
     os << data[0];
     for(int i = 1; i < count; i++)

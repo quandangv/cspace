@@ -22,6 +22,7 @@ set(HEADERS
   ${PUBLIC_HEADERS_DIR}/conversion.hpp
   ${PUBLIC_HEADERS_DIR}/error.hpp
   ${PUBLIC_HEADERS_DIR}/interface.hpp
+  ${PUBLIC_HEADERS_DIR}/gradient.hpp
   ${PUBLIC_HEADERS_DIR}/processor.hpp
 )
 
@@ -33,6 +34,7 @@ set(SOURCES
   ${SRC_DIR}/parse.cpp
   ${SRC_DIR}/setting.cpp
   ${SRC_DIR}/processor.cpp
+  ${SRC_DIR}/gradient.cpp
 
   ${SRC_DIR}/interface/add_term.cpp
   ${SRC_DIR}/interface/general.cpp
@@ -47,5 +49,5 @@ set(SOURCES
 )
 
 set(INTERNAL_TESTS parse interface)
-set(EXTERNAL_TESTS conversion processor)
+set(EXTERNAL_TESTS conversion processor gradient)
 set(TEST_FILES)
