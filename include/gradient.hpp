@@ -14,9 +14,9 @@ namespace cspace {
 
     void convert(colorspace from, colorspace to, int offset = 0);
     void auto_add(size_t count);
-    void get(double at, double output[dimension]);
+    void get(double at, double output[dimension]) const;
     void add_hex(double at, const std::string&, bool alpha_first);
-    std::string get_hex(double at);
+    std::string get_hex(double at) const;
   };
   template struct gradient<1>;
   template struct gradient<3>;

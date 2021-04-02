@@ -44,7 +44,7 @@ void gradient<dimension>::auto_add(size_t count) {
 }
 
 template<int dimension>
-void gradient<dimension>::get(double at, double output[dimension]) {
+void gradient<dimension>::get(double at, double output[dimension]) const {
   if (points.size() < 1)
     throw std::logic_error("Can't get from a gradient with less than 1 points");
   auto it = points.lower_bound(at);
@@ -67,7 +67,7 @@ copy:
 }
 
 template<int dimension>
-std::string gradient<dimension>::get_hex(double at) {
+std::string gradient<dimension>::get_hex(double at) const {
   double tmp[dimension];
   get(at, tmp);
   std::stringstream ss;
