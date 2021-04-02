@@ -9,8 +9,6 @@
 
 GLOBAL_NAMESPACE
 
-constexpr char scope[] = "setting";
-
 void print_all_help() {
   std::cout << "Converts colors from one color space to another.\nUsage: cspace [TERM] [TERM] [DATA] ...\n  Data are floating-point numbers that will be the input for the conversions\n  Terms are one of the following:\n";
   constexpr int term_indent = 26, example_indent = 39;
@@ -51,7 +49,7 @@ struct : setting {
 struct : basic_setting {
   string long_name() const { return "colorspaces?"; }
   string description() const { return "List supported color spaces"; }
-  void action(interface& intf) const { std::cout << list_colorspaces(" "); }
+  void action(interface&) const { std::cout << list_colorspaces(" "); }
 } _colorspaces;
 
 struct : basic_setting {

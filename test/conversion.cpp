@@ -72,13 +72,13 @@ TEST_P(GetTest, direct) {
 TEST_P(GetTest, indirect) {
   color test, expected;
   auto test_set = GetParam();
+// convert to a uniform colorspace to compare colors accurately
 #define TEST_METHOD(a, b, compare) \
   test = test_set.a; \
   convert(test.comp, colorspaces::a, colorspaces::b); \
-  // convert to a uniform colorspace to compare colors accurately \
   convert(test.comp, colorspaces::b, colorspaces::compare); \
   expected = test_set.b; \
-  convert(expected.comp, colorspaces::a, colorspaces::compare); \
+  convert(expected.comp, colorspaces::b, colorspaces::compare); \
   expect_near(test.comp, expected.comp, test_set.a.comp, test_set.rgb.comp, #a, #b);
 #define TEST_ROUTE(a, b, cmp) TEST_METHOD(a, b, cmp) TEST_METHOD(b, a, cmp)
   TEST_ROUTE(hsv, hsl, rgb)
