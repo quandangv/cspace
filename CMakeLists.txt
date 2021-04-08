@@ -4,12 +4,12 @@ set(CMAKE_CXX_STANDARD 20)
 project(cspace VERSION 1.1.0)
 
 list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
-include(file_list)
-include(cmake/targets)
+include(file_list.cmake)
+include(cmake/targets.cmake)
 add_shared_lib(cspace "${SOURCES}" "${INCLUDE_DIRS}" "${HEADERS}" "cspace")
 
 configure_file(${PRIVATE_HEADERS_DIR}/common.hpp.in  ${GENERATED_HEADERS_DIR}/common.hpp)
 
 if(BUILD_TESTS)
-  include(cmake/test)
+  include(cmake/test.cmake)
 endif()
