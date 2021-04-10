@@ -13,4 +13,5 @@ namespace cspace {
 
   int parse_component(const tstring& name, colorspace);
   bool parse_hex(const tstring& value, double* components, bool& have_alpha);
+  void clamp(double& value, double min, double max);
 }

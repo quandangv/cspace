@@ -72,8 +72,10 @@ std::string gradient<dimension>::get_hex(double at) const {
   get(at, tmp);
   std::stringstream ss;
   ss << std::hex << '#';
-  for(int i = 0; i < dimension; i++)
-    ss << std::setw(2) << lround(tmp[i]*255);
+  for(int i = 0; i < dimension; i++) {
+    clamp(tmp[i], 0, 1);
+    ss << std::setw(2) << std::setfill('0') << lround(tmp[i]*255);
+  }
   return ss.str();
 }
 

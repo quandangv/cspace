@@ -154,4 +154,12 @@ bool parse_hex(const tstring& value, double* comps, bool& have_alpha) {
   return true;
 }
 
+void clamp(double& value, double min, double max) {
+  if (value < min)
+    value = min;
+  else if (value > max)
+    value = max;
+}
+
+
 GLOBAL_NAMESPACE_END

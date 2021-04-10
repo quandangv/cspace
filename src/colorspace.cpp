@@ -1,4 +1,5 @@
 #include "colorspace.hpp"
+#include "parse.hpp"
 #include "logger.hpp"
 #include "conversion.hpp"
 
@@ -116,13 +117,6 @@ void convert(double* value, colorspace from, colorspace to) {
   }
   convert_up(value, from, parent);
   convert_down(value, parent, to);
-}
-
-void clamp(double& value, double min, double max) {
-  if (value < min)
-    value = min;
-  else if (value > max)
-    value = max;
 }
 
 // Clamp color data to the right range of the specified color space
